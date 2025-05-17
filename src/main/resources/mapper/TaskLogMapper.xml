@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shelly.mapper.TaskLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.shelly.entity.pojo.TaskLog">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="taskName" column="task_name" jdbcType="VARCHAR"/>
+            <result property="taskGroup" column="task_group" jdbcType="VARCHAR"/>
+            <result property="invokeTarget" column="invoke_target" jdbcType="VARCHAR"/>
+            <result property="taskMessage" column="task_message" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="errorInfo" column="error_info" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,task_name,task_group,
+        invoke_target,task_message,status,
+        error_info,create_time
+    </sql>
+    <select id="selectTaskLogCount" resultType="java.lang.Long">
+        SELECT COUNT(*) from t_task_log
+        <where>
+            <if test="param.keyword != null and param.keyword != ''">
+                AND task_name like concat('%', #{param.keyword}, '%')
+            </if>
+            <if test="param.taskGroup != null and param.taskGroup != ''">
+                AND task_group like concat('%', #{param.taskGroup}, '%')
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+        </where>
+    </select>
+    <select id="selectTaskLogRespList" resultType="com.shelly.entity.vo.Response.TaskLogResp">
+        SELECT * from t_task_log
+        <where>
+            <if test="param.keyword != null and param.keyword != ''">
+                AND task_name like concat('%', #{param.keyword}, '%')
+            </if>
+            <if test="param.taskGroup != null and param.taskGroup != ''">
+                AND task_group like concat('%', #{param.taskGroup}, '%')
+            </if>
+            <if test="param.status != null">
+                AND status = #{param.status}
+            </if>
+        </where>
+        ORDER BY create_time desc
+        LIMIT #{param.current},#{param.size}
+    </select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shelly.mapper.CarouselMapper">
+
+    <resultMap id="BaseResultMap" type="com.shelly.entity.pojo.Carousel">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,img_url,status,
+        remark,create_time,update_time
+    </sql>
+    <select id="selectCarouselList" resultType="com.shelly.entity.vo.Response.CarouselResp">
+        select id, img_url
+        from t_carousel
+        where `status` = 1
+    </select>
+    <select id="selectBackCarouselList" resultType="com.shelly.entity.vo.Response.CarouselBackResp">
+        select id, img_url, `status`, remark, create_time, update_time
+        from t_carousel
+        <where>
+            <if test="param.status != null">
+                status = #{param.status}
+            </if>
+        </where>
+        limit #{param.current}, #{param.size}
+    </select>
+</mapper>
