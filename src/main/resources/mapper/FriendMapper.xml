@@ -20,7 +20,7 @@
         avatar,url,introduction,
         create_time,update_time
     </sql>
-    <select id="selectFriendVOList" resultType="com.shelly.entity.vo.Response.FriendResp">
+    <select id="selectFriendVOList" resultType="com.shelly.entity.vo.res.FriendResp">
         SELECT id, `name`, color, url, avatar, introduction
         FROM t_friend
     </select>

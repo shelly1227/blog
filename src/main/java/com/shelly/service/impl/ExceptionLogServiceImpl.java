@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.shelly.entity.pojo.ExceptionLog;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.LogQuery;
+import com.shelly.entity.vo.query.LogQuery;
 import com.shelly.service.ExceptionLogService;
 import com.shelly.mapper.ExceptionLogMapper;
 import lombok.RequiredArgsConstructor;

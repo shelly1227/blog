@@ -13,10 +13,10 @@ import com.shelly.constants.RedisConstant;
 import com.shelly.entity.dto.MailDTO;
 import com.shelly.entity.pojo.*;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.CommentQuery;
-import com.shelly.entity.vo.Request.CheckReq;
-import com.shelly.entity.vo.Request.CommentReq;
-import com.shelly.entity.vo.Response.*;
+import com.shelly.entity.vo.query.CommentQuery;
+import com.shelly.entity.vo.req.CheckReq;
+import com.shelly.entity.vo.req.CommentReq;
+import com.shelly.entity.vo.res.*;
 import com.shelly.enums.CommentTypeEnum;
 import com.shelly.mapper.ArticleMapper;
 import com.shelly.mapper.TalkMapper;
@@ -30,7 +30,6 @@ import com.shelly.utils.HTMLUtils;
 import com.shelly.utils.PageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 /**

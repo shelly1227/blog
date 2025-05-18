@@ -20,38 +20,38 @@
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <resultMap id="articleHomeVO" type="com.shelly.entity.vo.Response.ArticleHomeResp">
+    <resultMap id="articleHomeVO" type="com.shelly.entity.vo.res.ArticleHomeResp">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
         <result column="article_desc" property="articleDesc"/>
         <result column="is_top" property="isTop"/>
         <result column="create_time" property="createTime"/>
-        <association property="category" javaType="com.shelly.entity.vo.Response.CategoryOptionResp">
+        <association property="category" javaType="com.shelly.entity.vo.res.CategoryOptionResp">
             <id column="category_id" property="id"/>
             <result column="category_name" property="categoryName"/>
         </association>
-        <collection property="tagVOList" ofType="com.shelly.entity.vo.Response.TagOptionResp">
+        <collection property="tagVOList" ofType="com.shelly.entity.vo.res.TagOptionResp">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
-    <resultMap id="articleConditionVO" type="com.shelly.entity.vo.Response.ArticleConditionResp">
+    <resultMap id="articleConditionVO" type="com.shelly.entity.vo.res.ArticleConditionResp">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
         <result column="create_time" property="createTime"/>
-        <association property="category" javaType="com.shelly.entity.vo.Response.CategoryOptionResp">
+        <association property="category" javaType="com.shelly.entity.vo.res.CategoryOptionResp">
             <id column="category_id" property="id"/>
             <result column="category_name" property="categoryName"/>
         </association>
-        <collection property="tagVOList" ofType="com.shelly.entity.vo.Response.TagOptionResp">
+        <collection property="tagVOList" ofType="com.shelly.entity.vo.res.TagOptionResp">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
 
-    <resultMap id="articleBackVO" type="com.shelly.entity.vo.Response.ArticleBackResp">
+    <resultMap id="articleBackVO" type="com.shelly.entity.vo.res.ArticleBackResp">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
@@ -62,13 +62,13 @@
         <result column="is_delete" property="isDelete"/>
         <result column="status" property="status"/>
         <result column="create_time" property="createTime"/>
-        <collection property="tagVOList" ofType="com.shelly.entity.vo.Response.TagOptionResp">
+        <collection property="tagVOList" ofType="com.shelly.entity.vo.res.TagOptionResp">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
 
-    <resultMap id="articleVO" type="com.shelly.entity.vo.Response.ArticleResp">
+    <resultMap id="articleVO" type="com.shelly.entity.vo.res.ArticleResp">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
@@ -76,11 +76,11 @@
         <result column="article_type" property="articleType"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
-        <association property="category" javaType="com.shelly.entity.vo.Response.CategoryOptionResp">
+        <association property="category" javaType="com.shelly.entity.vo.res.CategoryOptionResp">
             <id column="category_id" property="id"/>
             <result column="category_name" property="categoryName"/>
         </association>
-        <collection property="tagVOList" ofType="com.shelly.entity.vo.Response.TagOptionResp">
+        <collection property="tagVOList" ofType="com.shelly.entity.vo.res.TagOptionResp">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
@@ -93,7 +93,7 @@
         is_delete,is_recommend,status,
         create_time,update_time
     </sql>
-    <select id="selectArticleConditionList" resultType="com.shelly.entity.vo.Response.ArticleConditionResp">
+    <select id="selectArticleConditionList" resultType="com.shelly.entity.vo.res.ArticleConditionResp">
         SELECT a.id,
         article_cover,
         article_title,
@@ -225,7 +225,7 @@
         LEFT JOIN t_article_tag tat ON a.id = tat.article_id
         LEFT JOIN t_tag t ON t.id = tat.tag_id
     </select>
-    <select id="selectArticleInfoById" resultType="com.shelly.entity.vo.Response.ArticleInfoResp">
+    <select id="selectArticleInfoById" resultType="com.shelly.entity.vo.res.ArticleInfoResp">
         select id,
                category_id,
                article_cover,
@@ -290,7 +290,7 @@
           AND `status` = 1
           AND a.id = #{articleId}
     </select>
-    <select id="selectNextArticle" resultType="com.shelly.entity.vo.Response.ArticlePaginationResp">
+    <select id="selectNextArticle" resultType="com.shelly.entity.vo.res.ArticlePaginationResp">
         SELECT id, article_cover, article_title
         FROM t_article
         WHERE is_delete = 0
@@ -298,7 +298,7 @@
           AND id &gt; #{articleId}
         ORDER BY id ASC LIMIT 1
     </select>
-    <select id="selectLastArticle" resultType="com.shelly.entity.vo.Response.ArticlePaginationResp">
+    <select id="selectLastArticle" resultType="com.shelly.entity.vo.res.ArticlePaginationResp">
         SELECT id, article_cover, article_title
         FROM t_article
         WHERE is_delete = 0
@@ -306,7 +306,7 @@
           AND id &lt; #{articleId}
         ORDER BY id DESC LIMIT 1
     </select>
-    <select id="selectArticleRecommend" resultType="com.shelly.entity.vo.Response.ArticleRecommendResp">
+    <select id="selectArticleRecommend" resultType="com.shelly.entity.vo.res.ArticleRecommendResp">
         SELECT id,
                article_title,
                article_cover,
@@ -316,7 +316,7 @@
           AND `status` = 1
           AND is_recommend = 1 LIMIT 5
     </select>
-    <select id="selectArchiveList" resultType="com.shelly.entity.vo.Response.ArchiveResp">
+    <select id="selectArchiveList" resultType="com.shelly.entity.vo.res.ArchiveResp">
         select id, article_title, article_cover, create_time
         from t_article
         where is_delete = 0
@@ -324,7 +324,7 @@
         order by create_time
             LIMIT #{param.current}, #{param.size}
     </select>
-    <select id="searchArticle" resultType="com.shelly.entity.vo.Response.ArticleSearchResp">
+    <select id="searchArticle" resultType="com.shelly.entity.vo.res.ArticleSearchResp">
         SELECT id,
         article_title,
         article_content,
@@ -339,7 +339,7 @@
             </if>
         </where>
     </select>
-    <select id="selectArticleStatistics" resultType="com.shelly.entity.vo.Response.ArticleStatisticsResp">
+    <select id="selectArticleStatistics" resultType="com.shelly.entity.vo.res.ArticleStatisticsResp">
         SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,
                COUNT(*)                             AS count
         FROM t_article

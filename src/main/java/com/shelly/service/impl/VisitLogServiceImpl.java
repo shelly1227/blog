@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.shelly.entity.pojo.VisitLog;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.LogQuery;
+import com.shelly.entity.vo.query.LogQuery;
 import com.shelly.service.VisitLogService;
 import com.shelly.mapper.VisitLogMapper;
 import lombok.RequiredArgsConstructor;

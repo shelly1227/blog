@@ -15,7 +15,7 @@
         id,tag_name,create_time,
         update_time
     </sql>
-    <select id="selectBackTagList" resultType="com.shelly.entity.vo.Response.TagBackResp">
+    <select id="selectBackTagList" resultType="com.shelly.entity.vo.res.TagBackResp">
         SELECT t.id, t.tag_name, COUNT(tat.article_id) as article_count, t.create_time
         FROM t_tag t
         LEFT JOIN t_article_tag tat
@@ -29,11 +29,11 @@
         ORDER BY t.id DESC
         LIMIT #{param.current},#{param.size}
     </select>
-    <select id="selectTagOptionList" resultType="com.shelly.entity.vo.Response.TagOptionResp">
+    <select id="selectTagOptionList" resultType="com.shelly.entity.vo.res.TagOptionResp">
         select id, tag_name
         from t_tag
     </select>
-    <select id="selectTagVOList" resultType="com.shelly.entity.vo.Response.TagResp">
+    <select id="selectTagVOList" resultType="com.shelly.entity.vo.res.TagResp">
         SELECT t.id,
                t.tag_name,
                COUNT(tat.tag_id) AS article_count

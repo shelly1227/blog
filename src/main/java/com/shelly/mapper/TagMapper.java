@@ -3,10 +3,10 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Tag;
-import com.shelly.entity.vo.Response.TagBackResp;
-import com.shelly.entity.vo.Response.TagOptionResp;
-import com.shelly.entity.vo.Query.TagQuery;
-import com.shelly.entity.vo.Response.TagResp;
+import com.shelly.entity.vo.res.TagBackResp;
+import com.shelly.entity.vo.res.TagOptionResp;
+import com.shelly.entity.vo.query.TagQuery;
+import com.shelly.entity.vo.res.TagResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

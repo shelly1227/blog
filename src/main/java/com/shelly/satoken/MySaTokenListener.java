@@ -9,18 +9,19 @@ import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import com.shelly.entity.pojo.User;
-import com.shelly.entity.vo.Response.OnlineUserResp;
+import com.shelly.entity.vo.res.OnlineUserResp;
 import com.shelly.mapper.UserMapper;
 import com.shelly.utils.IpUtils;
 import com.shelly.utils.UserAgentUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
 
+import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 import static com.shelly.constants.CommonConstant.ONLINE_USER;
 import static com.shelly.enums.ZoneEnum.SHANGHAI;
 
@@ -51,7 +52,7 @@ public class MySaTokenListener implements SaTokenListener {
         // 解析browser和os
         Map<String, String> userAgentMap = UserAgentUtils.parseOsAndBrowser(request.getHeader("User-Agent"));
         // 获取登录ip地址
-        String ipAddress = ServletUtil.getClientIP(request);
+        String ipAddress = getClientIP(request);
         // 获取登录地址
         String ipSource = IpUtils.getIpSource(ipAddress);
         // 获取登录时间

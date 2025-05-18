@@ -21,12 +21,12 @@
         message_content,ip_address,ip_source,
         is_check,create_time,update_time
     </sql>
-    <select id="selectMessageVOList" resultType="com.shelly.entity.vo.Response.MessageResp">
+    <select id="selectMessageVOList" resultType="com.shelly.entity.vo.res.MessageResp">
         SELECT id, nickname, avatar, message_content
         from t_message
         WHERE is_check = 1
     </select>
-    <select id="selectBackMessageList" resultType="com.shelly.entity.vo.Response.MessageBackResp">
+    <select id="selectBackMessageList" resultType="com.shelly.entity.vo.res.MessageBackResp">
         SELECT
         tm.id,
         nickname,

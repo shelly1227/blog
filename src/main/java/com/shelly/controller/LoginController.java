@@ -4,12 +4,12 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import com.shelly.annotation.AccessLimit;
 import com.shelly.common.Result;
-import com.shelly.entity.vo.Request.LoginReq;
-import com.shelly.entity.vo.Request.RegisterReq;
+import com.shelly.entity.vo.req.LoginReq;
+import com.shelly.entity.vo.req.RegisterReq;
 import com.shelly.service.LoginService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "登录模块")
 public class LoginController {
 
 
@@ -30,6 +31,7 @@ public class LoginController {
      * @return {@link String} Token
      */
     @PostMapping("/login")
+    @Operation(summary = "用户登录")
     public Result<String> login(@Validated @RequestBody LoginReq login) {
         return Result.success(loginService.login(login));
     }
@@ -39,6 +41,7 @@ public class LoginController {
      */
     @SaCheckLogin
     @GetMapping("/logout")
+    @Operation(summary = "用户退出")
     public Result<?> logout() {
         StpUtil.logout();
         return Result.success();
@@ -51,6 +54,7 @@ public class LoginController {
      */
     @AccessLimit(seconds = 60, maxCount = 1)
     @GetMapping("/code")
+    @Operation(summary = "发送邮箱验证码")
     public Result<?> sendCode(String username) {
         loginService.sendCode(username);
         return Result.success();
@@ -63,6 +67,7 @@ public class LoginController {
      * @return {@link Result<>}
      */
     @PostMapping("/register")
+    @Operation(summary = "用户邮箱注册")
     public Result<?> register(@Validated @RequestBody RegisterReq register) {
         loginService.register(register);
         return Result.success();

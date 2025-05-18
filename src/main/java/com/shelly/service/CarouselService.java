@@ -3,11 +3,11 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Carousel;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.CarouselQuery;
-import com.shelly.entity.vo.Request.CarouselReqVo;
-import com.shelly.entity.vo.Request.CarouselStatusReq;
-import com.shelly.entity.vo.Response.CarouselBackResp;
-import com.shelly.entity.vo.Response.CarouselResp;
+import com.shelly.entity.vo.query.CarouselQuery;
+import com.shelly.entity.vo.req.CarouselReqVo;
+import com.shelly.entity.vo.req.CarouselStatusReq;
+import com.shelly.entity.vo.res.CarouselBackResp;
+import com.shelly.entity.vo.res.CarouselResp;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

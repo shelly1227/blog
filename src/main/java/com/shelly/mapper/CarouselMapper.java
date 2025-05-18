@@ -3,9 +3,9 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Carousel;
-import com.shelly.entity.vo.Query.CarouselQuery;
-import com.shelly.entity.vo.Response.CarouselBackResp;
-import com.shelly.entity.vo.Response.CarouselResp;
+import com.shelly.entity.vo.query.CarouselQuery;
+import com.shelly.entity.vo.res.CarouselBackResp;
+import com.shelly.entity.vo.res.CarouselResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

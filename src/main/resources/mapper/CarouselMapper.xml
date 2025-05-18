@@ -17,12 +17,12 @@
         id,img_url,status,
         remark,create_time,update_time
     </sql>
-    <select id="selectCarouselList" resultType="com.shelly.entity.vo.Response.CarouselResp">
+    <select id="selectCarouselList" resultType="com.shelly.entity.vo.res.CarouselResp">
         select id, img_url
         from t_carousel
         where `status` = 1
     </select>
-    <select id="selectBackCarouselList" resultType="com.shelly.entity.vo.Response.CarouselBackResp">
+    <select id="selectBackCarouselList" resultType="com.shelly.entity.vo.res.CarouselBackResp">
         select id, img_url, `status`, remark, create_time, update_time
         from t_carousel
         <where>

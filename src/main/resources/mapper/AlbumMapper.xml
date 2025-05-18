@@ -19,7 +19,7 @@
         album_desc,status,create_time,
         update_time
     </sql>
-    <select id="selectBackAlbumList" resultType="com.shelly.entity.vo.Response.AlbumBackResp">
+    <select id="selectBackAlbumList" resultType="com.shelly.entity.vo.res.AlbumBackResp">
         SELECT a.id,
         a.album_name,
         a.album_cover,
@@ -37,7 +37,7 @@
         ORDER BY a.id DESC
         LIMIT #{param.current}, #{param.size}
     </select>
-    <select id="selectAlbumVOList" resultType="com.shelly.entity.vo.Response.AlbumResp">
+    <select id="selectAlbumVOList" resultType="com.shelly.entity.vo.res.AlbumResp">
         select id, album_name, album_desc, album_cover
         from t_album
     </select>

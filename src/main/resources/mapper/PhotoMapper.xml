@@ -19,7 +19,7 @@
         photo_desc,photo_url,create_time,
         update_time
     </sql>
-    <select id="selectBackPhotoList" resultType="com.shelly.entity.vo.Response.PhotoBackResp">
+    <select id="selectBackPhotoList" resultType="com.shelly.entity.vo.res.PhotoBackResp">
         SELECT id, photo_name, photo_desc, photo_url
         FROM t_photo
         <where>

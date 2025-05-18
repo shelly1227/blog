@@ -2,17 +2,19 @@ package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.common.Result;
-import com.shelly.entity.vo.Response.FriendBackResp;
-import com.shelly.entity.vo.Request.FriendReq;
+import com.shelly.entity.vo.res.FriendBackResp;
+import com.shelly.entity.vo.req.FriendReq;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.FriendQuery;
-import com.shelly.entity.vo.Response.FriendResp;
+import com.shelly.entity.vo.query.FriendQuery;
+import com.shelly.entity.vo.res.FriendResp;
 import com.shelly.service.FriendService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -22,15 +24,18 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "友链模块")
 public class FriendController {
     private final  FriendService friendService;
     @PostMapping("/admin/friend/add")
     @SaCheckPermission("web:friend:add")
+    @Operation(summary = "添加友链")
     public Result<?> addFriend(@Valid @RequestBody FriendReq friend) {
         friendService.addFriend(friend);
         return Result.success();
     }
     @DeleteMapping("/admin/friend/delete")
+    @Operation(summary = "删除友链")
     @SaCheckPermission("web:friend:delete")
     public Result<?> deleteFriend(@RequestBody List<Integer> friendIdList) {
         friendService.deleteFriend(friendIdList);
@@ -38,16 +43,19 @@ public class FriendController {
     }
     @GetMapping("/admin/friend/list")
     @SaCheckPermission("web:friend:list")
+    @Operation(summary = "获取友链列表")
     public Result<PageResult<FriendBackResp>> listFriend(FriendQuery friendQuery) {
         return Result.success(friendService.listFriend(friendQuery));
     }
     @PutMapping("/admin/friend/update")
     @SaCheckPermission("web:friend:update")
+    @Operation(summary = "修改友链")
     public Result<?> updateFriend(@Valid @RequestBody FriendReq friend) {
         friendService.updateFriend(friend);
         return Result.success();
     }
     @GetMapping("/friend/list")
+    @Operation(summary = "获取友链列表")
     public Result<List<FriendResp>> listFriend() {
         return Result.success(friendService.listFriendVO());
     }

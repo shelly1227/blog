@@ -4,15 +4,16 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.annotation.AccessLimit;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.MessageQuery;
-import com.shelly.entity.vo.Request.CheckReq;
-import com.shelly.entity.vo.Request.MessageReq;
-import com.shelly.entity.vo.Response.MessageBackResp;
-import com.shelly.entity.vo.Response.MessageResp;
+import com.shelly.entity.vo.query.MessageQuery;
+import com.shelly.entity.vo.req.CheckReq;
+import com.shelly.entity.vo.req.MessageReq;
+import com.shelly.entity.vo.res.MessageBackResp;
+import com.shelly.entity.vo.res.MessageResp;
 import com.shelly.service.MessageService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "留言模块")
 public class MessageController {
 
     private final MessageService messageService;
 
-
-    @ApiOperation(value = "查看留言列表")
+    @Operation(summary = "查看留言列表")
     @GetMapping("/message/list")
     public Result<List<MessageResp>> listMessageVO() {
         return Result.success(messageService.listMessageVO());
@@ -33,12 +34,14 @@ public class MessageController {
 
 
     @SaCheckPermission("news:message:list")
+    @Operation(summary = "获取留言后台列表")
     @GetMapping("/admin/message/list")
     public Result<PageResult<MessageBackResp>> listMessageBackVO(MessageQuery messageQuery) {
         return Result.success(messageService.listMessageBackVO(messageQuery));
     }
 
     @AccessLimit(seconds = 60, maxCount = 3)
+    @Operation(summary = "添加留言")
     @PostMapping("/message/add")
     public Result<?> addMessage(@Validated @RequestBody MessageReq message) {
         messageService.addMessage(message);
@@ -47,6 +50,7 @@ public class MessageController {
 
 
     @SaCheckPermission("news:message:delete")
+    @Operation(summary = "删除留言")
     @DeleteMapping("/admin/message/delete")
     public Result<?> deleteMessage(@RequestBody List<Integer> messageIdList) {
         messageService.removeByIds(messageIdList);
@@ -55,6 +59,7 @@ public class MessageController {
 
 
     @SaCheckPermission("news:message:pass")
+    @Operation(summary = "审核留言")
     @PutMapping("/admin/message/pass")
     public Result<?> updateMessageCheck(@Validated @RequestBody CheckReq check) {
         messageService.updateMessageCheck(check);

@@ -4,10 +4,10 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.User;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.OnlineUserQuery;
-import com.shelly.entity.vo.Query.UserQuery;
-import com.shelly.entity.vo.Request.*;
-import com.shelly.entity.vo.Response.*;
+import com.shelly.entity.vo.query.OnlineUserQuery;
+import com.shelly.entity.vo.query.UserQuery;
+import com.shelly.entity.vo.req.*;
+import com.shelly.entity.vo.res.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

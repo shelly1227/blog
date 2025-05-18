@@ -3,10 +3,10 @@ package com.shelly.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.BlogFile;
-import com.shelly.entity.vo.Response.FileResp;
-import com.shelly.entity.vo.Request.FolderReq;
+import com.shelly.entity.vo.res.FileResp;
+import com.shelly.entity.vo.req.FolderReq;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.FileQuery;
+import com.shelly.entity.vo.query.FileQuery;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

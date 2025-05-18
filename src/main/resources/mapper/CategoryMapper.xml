@@ -17,7 +17,7 @@
         create_time,update_time
     </sql>
 
-    <select id="selectBackCategoryList" resultType="com.shelly.entity.vo.Response.CategoryBackResp">
+    <select id="selectBackCategoryList" resultType="com.shelly.entity.vo.res.CategoryBackResp">
         SELECT c.id, c.category_name, COUNT( a.id ) AS article_count, c.parent_id, c.create_time
         FROM t_category c
         LEFT JOIN t_article a
@@ -30,7 +30,7 @@
         GROUP BY c.id
         ORDER BY c.id DESC
     </select>
-    <select id="listCategoryVO" resultType="com.shelly.entity.vo.Response.CategoryResp">
+    <select id="listCategoryVO" resultType="com.shelly.entity.vo.res.CategoryResp">
         SELECT c.id,
                c.category_name,
                COUNT(a.id) AS article_count
@@ -39,7 +39,7 @@
                            ON c.id = a.category_id
         GROUP BY c.id
     </select>
-    <select id="selectCategoryVO" resultType="com.shelly.entity.vo.Response.CategoryResp">
+    <select id="selectCategoryVO" resultType="com.shelly.entity.vo.res.CategoryResp">
         SELECT c.id,
                c.category_name,
                COUNT(a.id) AS article_count

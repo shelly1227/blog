@@ -1,6 +1,6 @@
 package com.shelly.strategy.context;
 
-import com.shelly.entity.vo.Response.ArticleSearchResp;
+import com.shelly.entity.vo.res.ArticleSearchResp;
 import com.shelly.strategy.SearchStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

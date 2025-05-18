@@ -3,9 +3,9 @@ package com.shelly.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.OperationLog;
-import com.shelly.entity.vo.Response.OperationLogResp;
+import com.shelly.entity.vo.res.OperationLogResp;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.LogQuery;
+import com.shelly.entity.vo.query.LogQuery;
 
 /**
 * @author Shelly6

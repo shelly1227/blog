@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.shelly.entity.pojo.OperationLog;
-import com.shelly.entity.vo.Response.OperationLogResp;
+import com.shelly.entity.vo.res.OperationLogResp;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.LogQuery;
+import com.shelly.entity.vo.query.LogQuery;
 import com.shelly.service.OperationLogService;
 import com.shelly.mapper.OperationLogMapper;
 import lombok.RequiredArgsConstructor;

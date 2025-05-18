@@ -3,11 +3,11 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Menu;
-import com.shelly.entity.vo.Query.MenuQuery;
-import com.shelly.entity.vo.Response.MenuOptionResp;
-import com.shelly.entity.vo.Response.MenuResp;
-import com.shelly.entity.vo.Response.MenuTreeResp;
-import com.shelly.entity.vo.Response.UserMenuResp;
+import com.shelly.entity.vo.query.MenuQuery;
+import com.shelly.entity.vo.res.MenuOptionResp;
+import com.shelly.entity.vo.res.MenuResp;
+import com.shelly.entity.vo.res.MenuTreeResp;
+import com.shelly.entity.vo.res.UserMenuResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

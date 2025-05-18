@@ -2,9 +2,9 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Message;
-import com.shelly.entity.vo.Query.MessageQuery;
-import com.shelly.entity.vo.Response.MessageBackResp;
-import com.shelly.entity.vo.Response.MessageResp;
+import com.shelly.entity.vo.query.MessageQuery;
+import com.shelly.entity.vo.res.MessageBackResp;
+import com.shelly.entity.vo.res.MessageResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

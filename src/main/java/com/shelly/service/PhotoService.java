@@ -4,11 +4,11 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Photo;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.PhotoQuery;
-import com.shelly.entity.vo.Request.PhotoInfoReq;
-import com.shelly.entity.vo.Request.PhotoReq;
-import com.shelly.entity.vo.Response.AlbumBackResp;
-import com.shelly.entity.vo.Response.PhotoBackResp;
+import com.shelly.entity.vo.query.PhotoQuery;
+import com.shelly.entity.vo.req.PhotoInfoReq;
+import com.shelly.entity.vo.req.PhotoReq;
+import com.shelly.entity.vo.res.AlbumBackResp;
+import com.shelly.entity.vo.res.PhotoBackResp;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

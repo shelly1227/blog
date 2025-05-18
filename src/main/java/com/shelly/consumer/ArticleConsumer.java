@@ -2,7 +2,7 @@ package com.shelly.consumer;
 
 import cn.hutool.json.JSONUtil;
 import com.shelly.entity.dto.CanalDTO;
-import com.shelly.entity.vo.Response.ArticleSearchResp;
+import com.shelly.entity.vo.res.ArticleSearchResp;
 import com.shelly.service.impl.ElasticsearchService;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.core.Message;

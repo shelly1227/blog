@@ -14,8 +14,8 @@ import com.shelly.entity.dto.MailDTO;
 import com.shelly.entity.pojo.SiteConfig;
 import com.shelly.entity.pojo.User;
 import com.shelly.entity.pojo.UserRole;
-import com.shelly.entity.vo.Request.LoginReq;
-import com.shelly.entity.vo.Request.RegisterReq;
+import com.shelly.entity.vo.req.LoginReq;
+import com.shelly.entity.vo.req.RegisterReq;
 import com.shelly.enums.LoginTypeEnum;
 import com.shelly.enums.RoleEnum;
 import com.shelly.mapper.UserMapper;
@@ -23,11 +23,9 @@ import com.shelly.mapper.UserRoleMapper;
 import com.shelly.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Service

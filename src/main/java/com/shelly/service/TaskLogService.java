@@ -3,10 +3,10 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.shelly.entity.pojo.TaskLog;
-import com.shelly.entity.vo.Response.TaskLogResp;
+import com.shelly.entity.vo.res.TaskLogResp;
 
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.TaskQuery;
+import com.shelly.entity.vo.query.TaskQuery;
 
 /**
 * @author Shelly6

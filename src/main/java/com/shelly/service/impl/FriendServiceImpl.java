@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.shelly.entity.pojo.Friend;
-import com.shelly.entity.vo.Response.FriendBackResp;
-import com.shelly.entity.vo.Request.FriendReq;
+import com.shelly.entity.vo.res.FriendBackResp;
+import com.shelly.entity.vo.req.FriendReq;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.FriendQuery;
-import com.shelly.entity.vo.Response.FriendResp;
+import com.shelly.entity.vo.query.FriendQuery;
+import com.shelly.entity.vo.res.FriendResp;
 import com.shelly.service.FriendService;
 import com.shelly.mapper.FriendMapper;
 import lombok.RequiredArgsConstructor;

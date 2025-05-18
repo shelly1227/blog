@@ -38,7 +38,7 @@
         ORDER BY id DESC LIMIT #{param.current},#{param.size} ) temp
         LEFT JOIN t_visit_log tvl ON temp.id = tvl.id
     </select>
-    <select id="selectUserViewList" resultType="com.shelly.entity.vo.Response.UserViewResp">
+    <select id="selectUserViewList" resultType="com.shelly.entity.vo.res.UserViewResp">
         select count(distinct ip_address)           as uv,
                count(create_time)                   as pv,
                DATE_FORMAT(create_time, '%Y-%m-%d') as `date`

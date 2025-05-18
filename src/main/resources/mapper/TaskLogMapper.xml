@@ -34,7 +34,7 @@
             </if>
         </where>
     </select>
-    <select id="selectTaskLogRespList" resultType="com.shelly.entity.vo.Response.TaskLogResp">
+    <select id="selectTaskLogRespList" resultType="com.shelly.entity.vo.res.TaskLogResp">
         SELECT * from t_task_log
         <where>
             <if test="param.keyword != null and param.keyword != ''">

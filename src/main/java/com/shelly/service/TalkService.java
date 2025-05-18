@@ -3,12 +3,12 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Talk;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.PageQuery;
-import com.shelly.entity.vo.Query.TalkQuery;
-import com.shelly.entity.vo.Request.TalkReq;
-import com.shelly.entity.vo.Response.TalkBackInfoResp;
-import com.shelly.entity.vo.Response.TalkBackResp;
-import com.shelly.entity.vo.Response.TalkResp;
+import com.shelly.entity.vo.query.PageQuery;
+import com.shelly.entity.vo.query.TalkQuery;
+import com.shelly.entity.vo.req.TalkReq;
+import com.shelly.entity.vo.res.TalkBackInfoResp;
+import com.shelly.entity.vo.res.TalkBackResp;
+import com.shelly.entity.vo.res.TalkResp;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

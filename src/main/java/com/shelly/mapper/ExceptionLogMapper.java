@@ -3,7 +3,7 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.ExceptionLog;
-import com.shelly.entity.vo.Query.LogQuery;
+import com.shelly.entity.vo.query.LogQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +15,6 @@ import java.util.List;
 * @createDate 2024-07-22 20:24:46
 * @Entity generator.entity.ExceptionLog
 */
-@Mapper
 public interface ExceptionLogMapper extends BaseMapper<ExceptionLog> {
 
     List<ExceptionLog> selectExceptionLogList(@Param("param") LogQuery logQuery);

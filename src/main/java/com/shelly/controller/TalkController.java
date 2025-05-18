@@ -5,20 +5,19 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.annotation.AccessLimit;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.PageQuery;
-import com.shelly.entity.vo.Query.TalkQuery;
-import com.shelly.entity.vo.Request.TalkReq;
-import com.shelly.entity.vo.Response.TalkBackInfoResp;
-import com.shelly.entity.vo.Response.TalkBackResp;
-import com.shelly.entity.vo.Response.TalkResp;
+import com.shelly.entity.vo.query.PageQuery;
+import com.shelly.entity.vo.query.TalkQuery;
+import com.shelly.entity.vo.req.TalkReq;
+import com.shelly.entity.vo.res.TalkBackInfoResp;
+import com.shelly.entity.vo.res.TalkBackResp;
+import com.shelly.entity.vo.res.TalkResp;
 import com.shelly.enums.LikeTypeEnum;
 import com.shelly.service.TalkService;
 import com.shelly.strategy.context.LikeStrategyContext;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +27,11 @@ import java.util.List;
 
 /**
  * 说说控制器
- *
  * @author shelly
  **/
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "说说模块")
 public class TalkController {
 
     private final TalkService talkService;
@@ -43,6 +42,7 @@ public class TalkController {
 
     @SaCheckPermission("web:talk:list")
     @GetMapping("/admin/talk/list")
+    @Operation(summary = "获取说说列表")
     public Result<PageResult<TalkBackResp>> listTalkBackVO(TalkQuery talkQuery) {
         return Result.success(talkService.listTalkBackVO(talkQuery));
     }
@@ -51,11 +51,13 @@ public class TalkController {
     @ApiImplicitParam(name = "file", value = "相册封面", required = true, dataType = "MultipartFile")
     @SaCheckPermission("web:talk:upload")
     @PostMapping("/admin/talk/upload")
+    @Operation(summary = "上传说说封面")
     public Result<String> uploadTalkCover(@RequestParam("file") MultipartFile file) {
         return Result.success(talkService.uploadTalkCover(file));
     }
 
     @SaCheckPermission("web:talk:add")
+    @Operation(summary = "添加说说")
     @PostMapping("/admin/talk/add")
     public Result<?> addTalk(@Validated @RequestBody TalkReq talk) {
         talkService.addTalk(talk);
@@ -66,6 +68,7 @@ public class TalkController {
 
     @SaCheckPermission("web:talk:delete")
     @DeleteMapping("/admin/talk/delete/{talkId}")
+    @Operation(summary = "删除说说")
     public Result<?> deleteTalk(@PathVariable("talkId") Integer talkId) {
         talkService.delete(talkId);
         return Result.success();
@@ -75,6 +78,7 @@ public class TalkController {
 
     @SaCheckPermission("web:talk:update")
     @PutMapping("/admin/talk/update")
+    @Operation(summary = "修改说说")
     public Result<?> updateTalk(@Validated @RequestBody TalkReq talk) {
         talkService.updateTalk(talk);
         return Result.success();
@@ -82,6 +86,7 @@ public class TalkController {
 
 
     @SaCheckPermission("web:talk:edit")
+    @Operation(summary = "获取说说信息")
     @GetMapping("/admin/talk/edit/{talkId}")
     public Result<TalkBackInfoResp> editTalk(@PathVariable("talkId") Integer talkId) {
         return Result.success(talkService.editTalk(talkId));
@@ -90,6 +95,7 @@ public class TalkController {
     @SaCheckLogin
     @AccessLimit(seconds = 60, maxCount = 3)
     @SaCheckPermission("web:talk:like")
+    @Operation(summary = "点赞")
     @PostMapping("/talk/{talkId}/like")
     public Result<?> saveTalkLike(@PathVariable("talkId") Integer talkId) {
         likeStrategyContext.executeLikeStrategy(LikeTypeEnum.TALK, talkId);
@@ -98,6 +104,7 @@ public class TalkController {
 
 
     @GetMapping("/home/talk")
+    @Operation(summary = "获取首页说说")
     public Result<List<String>> listTalkHome() {
         return Result.success(talkService.listTalkHome());
     }
@@ -105,6 +112,7 @@ public class TalkController {
 
 
     @GetMapping("/talk/list")
+    @Operation(summary = "获取说说列表")
     public Result<PageResult<TalkResp>> listTalkVO(@Validated PageQuery pageQuery) {
         return Result.success(talkService.listTalkVO(pageQuery));
     }
@@ -112,6 +120,7 @@ public class TalkController {
 
 
     @GetMapping("/talk/{talkId}")
+    @Operation(summary = "获取说说详情")
     public Result<TalkResp> getTalkById(@PathVariable("talkId") Integer talkId) {
         return Result.success(talkService.getTalkById(talkId));
     }

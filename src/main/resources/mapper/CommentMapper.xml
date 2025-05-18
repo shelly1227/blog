@@ -24,7 +24,7 @@
         from_uid,to_uid,is_check,
         create_time,update_time
     </sql>
-    <select id="selectCommentCountByTypeId" resultType="com.shelly.entity.vo.Response.CommentCountResp">
+    <select id="selectCommentCountByTypeId" resultType="com.shelly.entity.vo.res.CommentCountResp">
         SELECT
         type_id as id,
         COUNT(*) AS comment_count
@@ -56,7 +56,7 @@
             </if>
         </where>
     </select>
-    <select id="selectBackCommentList" resultType="com.shelly.entity.vo.Response.CommentBackResp">
+    <select id="selectBackCommentList" resultType="com.shelly.entity.vo.res.CommentBackResp">
         SELECT c.id,
         u.avatar,
         u.nickname AS from_nickname,
@@ -84,7 +84,7 @@
         ORDER BY c.id DESC
         LIMIT #{param.current},#{param.size}
     </select>
-    <select id="selectParentComment" resultType="com.shelly.entity.vo.Response.CommentResp">
+    <select id="selectParentComment" resultType="com.shelly.entity.vo.res.CommentResp">
         SELECT c.id, c.from_uid, u.nickname AS fromNickname,u.web_site, u.avatar, c.comment_content, c.create_time
         FROM t_comment c
         INNER JOIN t_user u ON c.from_uid = u.id
@@ -99,7 +99,7 @@
         ORDER BY c.id DESC
         LIMIT #{param.current},#{param.size}
     </select>
-    <select id="selectReplyByParentIdList" resultType="com.shelly.entity.vo.Response.ReplyResp">
+    <select id="selectReplyByParentIdList" resultType="com.shelly.entity.vo.res.ReplyResp">
         SELECT *
         FROM (
         SELECT c.from_uid,
@@ -123,7 +123,7 @@
         ) t
         WHERE 4 > row_num
     </select>
-    <select id="selectReplyCountByParentId" resultType="com.shelly.entity.vo.Response.ReplyCountResp">
+    <select id="selectReplyCountByParentId" resultType="com.shelly.entity.vo.res.ReplyCountResp">
         SELECT parent_id as comment_id,
         count(1) AS reply_count
         FROM t_comment
@@ -134,7 +134,7 @@
         </foreach>
         GROUP BY parent_id
     </select>
-    <select id="selectRecentComment" resultType="com.shelly.entity.vo.Response.RecentCommentResp">
+    <select id="selectRecentComment" resultType="com.shelly.entity.vo.res.RecentCommentResp">
         SELECT c.id,
                u.nickname,
                avatar,
@@ -145,7 +145,7 @@
         WHERE c.is_check = 1
         ORDER BY c.create_time DESC LIMIT 5
     </select>
-    <select id="selectReplyByParentId" resultType="com.shelly.entity.vo.Response.ReplyResp">
+    <select id="selectReplyByParentId" resultType="com.shelly.entity.vo.res.ReplyResp">
         SELECT c.from_uid,
                u.nickname AS from_nickname,
                u.avatar,

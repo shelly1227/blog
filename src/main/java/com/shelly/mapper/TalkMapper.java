@@ -3,11 +3,11 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Talk;
-import com.shelly.entity.vo.Query.PageQuery;
-import com.shelly.entity.vo.Query.TalkQuery;
-import com.shelly.entity.vo.Response.TalkBackInfoResp;
-import com.shelly.entity.vo.Response.TalkBackResp;
-import com.shelly.entity.vo.Response.TalkResp;
+import com.shelly.entity.vo.query.PageQuery;
+import com.shelly.entity.vo.query.TalkQuery;
+import com.shelly.entity.vo.res.TalkBackInfoResp;
+import com.shelly.entity.vo.res.TalkBackResp;
+import com.shelly.entity.vo.res.TalkResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

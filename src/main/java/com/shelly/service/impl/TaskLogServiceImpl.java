@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 
 import com.shelly.entity.pojo.TaskLog;
-import com.shelly.entity.vo.Response.TaskLogResp;
+import com.shelly.entity.vo.res.TaskLogResp;
 
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.TaskQuery;
+import com.shelly.entity.vo.query.TaskQuery;
 import com.shelly.service.TaskLogService;
 import com.shelly.mapper.TaskLogMapper;
 import lombok.RequiredArgsConstructor;

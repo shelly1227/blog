@@ -3,9 +3,9 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Role;
-import com.shelly.entity.vo.Query.RoleQuery;
-import com.shelly.entity.vo.Response.RoleResp;
-import com.shelly.entity.vo.Response.UserRoleResp;
+import com.shelly.entity.vo.query.RoleQuery;
+import com.shelly.entity.vo.res.RoleResp;
+import com.shelly.entity.vo.res.UserRoleResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

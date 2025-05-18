@@ -2,8 +2,8 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.User;
-import com.shelly.entity.vo.Query.UserQuery;
-import com.shelly.entity.vo.Response.UserBackResp;
+import com.shelly.entity.vo.query.UserQuery;
+import com.shelly.entity.vo.res.UserBackResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

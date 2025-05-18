@@ -3,17 +3,16 @@ package com.shelly.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.CarouselQuery;
-import com.shelly.entity.vo.Request.CarouselReqVo;
-import com.shelly.entity.vo.Request.CarouselStatusReq;
-import com.shelly.entity.vo.Response.CarouselBackResp;
-import com.shelly.entity.vo.Response.CarouselResp;
+import com.shelly.entity.vo.query.CarouselQuery;
+import com.shelly.entity.vo.req.CarouselReqVo;
+import com.shelly.entity.vo.req.CarouselStatusReq;
+import com.shelly.entity.vo.res.CarouselBackResp;
+import com.shelly.entity.vo.res.CarouselResp;
 import com.shelly.service.CarouselService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "轮播图模块")
 public class CarouselController {
 
 
@@ -29,12 +29,14 @@ public class CarouselController {
 
 
     @GetMapping("/carousel/list")
+    @Operation(summary = "获取轮播图列表")
     public Result<List<CarouselResp>> getCarouselList() {
         return Result.success(carouselService.getCarouselList());
     }
 
     @SaCheckPermission("web:carousel:list")
     @GetMapping("/admin/carousel/list")
+    @Operation(summary = "获取后台轮播图列表")
     public Result<PageResult<CarouselBackResp>> getCarouselVOList(CarouselQuery carouselQuery) {
         return Result.success(carouselService.getCarouselVOList(carouselQuery));
     }
@@ -43,12 +45,14 @@ public class CarouselController {
     @ApiImplicitParam(name = "file", value = "轮播图片", required = true, dataType = "MultipartFile")
     @SaCheckPermission("web:carousel:upload")
     @PostMapping("/admin/carousel/upload")
+    @Operation(summary = "上传轮播图")
     public Result<String> uploadCarousel(@RequestParam("file") MultipartFile file) {
         return Result.success(carouselService.uploadCarousel(file));
     }
 
 
     @SaCheckPermission("web:carousel:add")
+    @Operation(summary = "添加轮播图")
     @PostMapping("/admin/carousel/add")
     public Result<?> addCarousel(@Validated @RequestBody CarouselReqVo carouselReqVo) {
         carouselService.addCarousel(carouselReqVo);
@@ -58,6 +62,7 @@ public class CarouselController {
 
 
     @SaCheckPermission("web:carousel:update")
+    @Operation(summary = "修改轮播图")
     @PostMapping("/admin/carousel/update")
     public Result<?> updateCarousel(@Validated @RequestBody CarouselReqVo carouselReqVo) {
         carouselService.updateCarousel(carouselReqVo);
@@ -66,6 +71,7 @@ public class CarouselController {
 
 
     @SaCheckPermission("web:carousel:delete")
+    @Operation(summary = "删除轮播图")
     @DeleteMapping("/admin/carousel/delete")
     public Result<?> deleteCarousel(@RequestBody List<Integer> carouselIdList) {
         carouselService.removeByIds(carouselIdList);
@@ -74,6 +80,7 @@ public class CarouselController {
 
 
     @SaCheckPermission("web:carousel:status")
+    @Operation(summary = "修改轮播图状态")
     @PutMapping("/admin/carousel/status")
     public Result<?> updateCarouselStatus(@Validated @RequestBody CarouselStatusReq carouselStatusReq) {
         carouselService.updateCarouselStatus(carouselStatusReq);

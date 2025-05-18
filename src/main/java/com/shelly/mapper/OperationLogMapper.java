@@ -3,8 +3,8 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.OperationLog;
-import com.shelly.entity.vo.Response.OperationLogResp;
-import com.shelly.entity.vo.Query.LogQuery;
+import com.shelly.entity.vo.res.OperationLogResp;
+import com.shelly.entity.vo.query.LogQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,8 +1,9 @@
 package com.shelly.utils;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -15,7 +16,7 @@ public class WebUtils {
      * @param response 渲染对象
      * @param string   待渲染的字符串
      */
-    public static void renderString(HttpServletResponse response, String string) {
+    public static void renderString(@NotNull HttpServletResponse response, String string) {
         try {
             response.setStatus(200);
             response.setContentType("application/json");

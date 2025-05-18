@@ -3,11 +3,11 @@ package com.shelly.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Menu;
-import com.shelly.entity.vo.Query.MenuQuery;
-import com.shelly.entity.vo.Request.MenuReq;
-import com.shelly.entity.vo.Response.MenuOptionResp;
-import com.shelly.entity.vo.Response.MenuResp;
-import com.shelly.entity.vo.Response.MenuTreeResp;
+import com.shelly.entity.vo.query.MenuQuery;
+import com.shelly.entity.vo.req.MenuReq;
+import com.shelly.entity.vo.res.MenuOptionResp;
+import com.shelly.entity.vo.res.MenuResp;
+import com.shelly.entity.vo.res.MenuTreeResp;
 
 import java.util.List;
 

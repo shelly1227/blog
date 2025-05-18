@@ -7,6 +7,8 @@ import com.shelly.entity.pojo.SiteConfig;
 import com.shelly.service.SiteConfigService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "站点配置模块")
 public class SiteConfigController {
 
     private final SiteConfigService siteConfigService;
@@ -26,6 +29,7 @@ public class SiteConfigController {
 
     @SaCheckPermission("web:site:list")
     @GetMapping("/admin/site/list")
+    @Operation(summary = "获取网站配置")
     public Result<SiteConfig> getSiteConfig() {
         return Result.success(siteConfigService.getSiteConfig());
     }
@@ -39,6 +43,7 @@ public class SiteConfigController {
 
     @SaCheckPermission("web:site:update")
     @PutMapping("/admin/site/update")
+    @Operation(summary = "更新网站配置")
     public Result<?> updateSiteConfig(@RequestBody SiteConfig siteConfig) {
         siteConfigService.updateSiteConfig(siteConfig);
         return Result.success();
@@ -53,6 +58,7 @@ public class SiteConfigController {
 
     @ApiImplicitParam(name = "file", value = "配置图片", required = true, dataType = "MultipartFile")
     @SaCheckPermission("web:site:upload")
+    @Operation(summary = "上传网站配置图片")
     @PostMapping("/admin/site/upload")
     public Result<String> uploadSiteImg(@RequestParam("file") MultipartFile file) {
         return Result.success(siteConfigService.uploadSiteImg(file));

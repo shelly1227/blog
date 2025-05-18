@@ -27,7 +27,7 @@
         is_disable,order_num,create_time,
         update_time
     </sql>
-    <select id="selectMenuOptions" resultType="com.shelly.entity.vo.Response.MenuOptionResp">
+    <select id="selectMenuOptions" resultType="com.shelly.entity.vo.res.MenuOptionResp">
         SELECT id        as `value`,
                parent_id,
                menu_name as label
@@ -36,7 +36,7 @@
           AND menu_type IN ('M', 'C')
         ORDER BY order_num
     </select>
-    <select id="selectMenuTree" resultType="com.shelly.entity.vo.Response.MenuTreeResp">
+    <select id="selectMenuTree" resultType="com.shelly.entity.vo.res.MenuTreeResp">
         SELECT id,
                parent_id,
                menu_name as label
@@ -44,7 +44,7 @@
         WHERE is_disable = 0
         ORDER BY order_num
     </select>
-    <select id="selectMenuVOList" resultType="com.shelly.entity.vo.Response.MenuResp">
+    <select id="selectMenuVOList" resultType="com.shelly.entity.vo.res.MenuResp">
         SELECT id,
         parent_id,
         menu_type,
@@ -75,7 +75,7 @@
         WHERE rm.role_id = #{roleId}
           AND m.is_disable = 0
     </select>
-    <select id="selectMenuByUserId" resultType="com.shelly.entity.vo.Response.UserMenuResp">
+    <select id="selectMenuByUserId" resultType="com.shelly.entity.vo.res.UserMenuResp">
         SELECT DISTINCT m.id,
                         m.parent_id,
                         m.menu_name,

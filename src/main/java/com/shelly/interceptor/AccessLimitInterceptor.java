@@ -1,22 +1,25 @@
 package com.shelly.interceptor;
 
-import cn.hutool.extra.servlet.ServletUtil;
+
 import com.alibaba.fastjson2.JSON;
 import com.shelly.annotation.AccessLimit;
 import com.shelly.common.Result;
 import com.shelly.service.RedisService;
 import com.shelly.utils.WebUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.method.HandlerMethod;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
+
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 
 @Slf4j
 @Component
@@ -36,7 +39,7 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
             if (accessLimit != null) {
                 int seconds = accessLimit.seconds();
                 int maxCount = accessLimit.maxCount();
-                String ip = ServletUtil.getClientIP(request);
+                String ip = getClientIP(request);
                 String method = request.getMethod();
                 String requestUri = request.getRequestURI();
                 String redisKey = ip + ":" + method + ":" + requestUri;

@@ -3,14 +3,14 @@ package com.shelly.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Category;
-import com.shelly.entity.vo.Response.CategoryBackResp;
-import com.shelly.entity.vo.Response.CategoryOptionResp;
-import com.shelly.entity.vo.Response.CategoryResp;
-import com.shelly.entity.vo.Query.ArticleConditionQuery;
-import com.shelly.entity.vo.Query.CategoryQuery;
+import com.shelly.entity.vo.res.CategoryBackResp;
+import com.shelly.entity.vo.res.CategoryOptionResp;
+import com.shelly.entity.vo.res.CategoryResp;
+import com.shelly.entity.vo.query.ArticleConditionQuery;
+import com.shelly.entity.vo.query.CategoryQuery;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Request.CategoryReq;
-import com.shelly.entity.vo.Response.ArticleConditionList;
+import com.shelly.entity.vo.req.CategoryReq;
+import com.shelly.entity.vo.res.ArticleConditionList;
 
 import java.util.List;
 

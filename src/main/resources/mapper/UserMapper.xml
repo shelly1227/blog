@@ -21,7 +21,7 @@
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <resultMap id="UserBackMap" type="com.shelly.entity.vo.Response.UserBackResp">
+    <resultMap id="UserBackMap" type="com.shelly.entity.vo.res.UserBackResp">
         <id column="id" property="id"/>
         <result column="nickname" property="nickname"/>
         <result column="avatar" property="avatar"/>
@@ -31,7 +31,7 @@
         <result column="is_disable" property="isDisable"/>
         <result column="login_time" property="loginTime"/>
         <result column="create_time" property="createTime"/>
-        <collection property="roleList" ofType="com.shelly.entity.vo.Response.UserRoleResp">
+        <collection property="roleList" ofType="com.shelly.entity.vo.res.UserRoleResp">
             <id column="role_id" property="id"/>
             <id column="role_name" property="roleName"/>
         </collection>

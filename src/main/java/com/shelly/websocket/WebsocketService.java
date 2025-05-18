@@ -10,14 +10,14 @@ import com.shelly.enums.ChatTypeEnum;
 import com.shelly.mapper.ChatRecordMapper;
 import com.shelly.utils.HTMLUtils;
 import com.shelly.utils.IpUtils;
+import jakarta.websocket.*;
+import jakarta.websocket.server.HandshakeRequest;
+import jakarta.websocket.server.ServerEndpoint;
+import jakarta.websocket.server.ServerEndpointConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.websocket.*;
-import javax.websocket.server.HandshakeRequest;
-import javax.websocket.server.ServerEndpoint;
-import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;

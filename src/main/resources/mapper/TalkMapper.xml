@@ -20,7 +20,7 @@
         images,is_top,status,
         create_time,update_time
     </sql>
-    <select id="selectBackTalkList" resultType="com.shelly.entity.vo.Response.TalkBackResp">
+    <select id="selectBackTalkList" resultType="com.shelly.entity.vo.res.TalkBackResp">
         SELECT
         t.id,
         nickname,
@@ -43,7 +43,7 @@
         t.id DESC
         LIMIT #{param.current},#{param.size}
     </select>
-    <select id="selectTalkBackById" resultType="com.shelly.entity.vo.Response.TalkBackInfoResp">
+    <select id="selectTalkBackById" resultType="com.shelly.entity.vo.res.TalkBackInfoResp">
         SELECT id,
                talk_content,
                images,
@@ -52,7 +52,7 @@
         FROM t_talk
         WHERE id = #{talkId}
     </select>
-    <select id="selectTalkById" resultType="com.shelly.entity.vo.Response.TalkResp">
+    <select id="selectTalkById" resultType="com.shelly.entity.vo.res.TalkResp">
         SELECT t.id,
                nickname,
                avatar,
@@ -65,7 +65,7 @@
         WHERE t.id = #{talkId}
           AND t.status = 1
     </select>
-    <select id="selectTalkList" resultType="com.shelly.entity.vo.Response.TalkResp">
+    <select id="selectTalkList" resultType="com.shelly.entity.vo.res.TalkResp">
         SELECT t.id,
                nickname,
                avatar,

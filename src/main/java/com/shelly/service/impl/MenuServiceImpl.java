@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.shelly.entity.pojo.Menu;
 import com.shelly.entity.pojo.RoleMenu;
-import com.shelly.entity.vo.Query.MenuQuery;
-import com.shelly.entity.vo.Request.MenuReq;
-import com.shelly.entity.vo.Response.MenuOptionResp;
-import com.shelly.entity.vo.Response.MenuResp;
-import com.shelly.entity.vo.Response.MenuTreeResp;
+import com.shelly.entity.vo.query.MenuQuery;
+import com.shelly.entity.vo.req.MenuReq;
+import com.shelly.entity.vo.res.MenuOptionResp;
+import com.shelly.entity.vo.res.MenuResp;
+import com.shelly.entity.vo.res.MenuTreeResp;
 import com.shelly.mapper.RoleMenuMapper;
 import com.shelly.service.MenuService;
 import com.shelly.mapper.MenuMapper;

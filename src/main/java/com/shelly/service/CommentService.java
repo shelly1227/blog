@@ -4,13 +4,13 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Comment;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.CommentQuery;
-import com.shelly.entity.vo.Request.CheckReq;
-import com.shelly.entity.vo.Request.CommentReq;
-import com.shelly.entity.vo.Response.CommentBackResp;
-import com.shelly.entity.vo.Response.CommentResp;
-import com.shelly.entity.vo.Response.RecentCommentResp;
-import com.shelly.entity.vo.Response.ReplyResp;
+import com.shelly.entity.vo.query.CommentQuery;
+import com.shelly.entity.vo.req.CheckReq;
+import com.shelly.entity.vo.req.CommentReq;
+import com.shelly.entity.vo.res.CommentBackResp;
+import com.shelly.entity.vo.res.CommentResp;
+import com.shelly.entity.vo.res.RecentCommentResp;
+import com.shelly.entity.vo.res.ReplyResp;
 
 import java.util.List;
 

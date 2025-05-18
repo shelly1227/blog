@@ -3,10 +3,10 @@ package com.shelly.service;
 import com.shelly.entity.pojo.Album;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.AlbumQuery;
-import com.shelly.entity.vo.Request.AlbumReq;
-import com.shelly.entity.vo.Response.AlbumBackResp;
-import com.shelly.entity.vo.Response.AlbumResp;
+import com.shelly.entity.vo.query.AlbumQuery;
+import com.shelly.entity.vo.req.AlbumReq;
+import com.shelly.entity.vo.res.AlbumBackResp;
+import com.shelly.entity.vo.res.AlbumResp;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

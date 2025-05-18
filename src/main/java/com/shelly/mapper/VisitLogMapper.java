@@ -3,8 +3,8 @@ package com.shelly.mapper;
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.VisitLog;
-import com.shelly.entity.vo.Query.LogQuery;
-import com.shelly.entity.vo.Response.UserViewResp;
+import com.shelly.entity.vo.query.LogQuery;
+import com.shelly.entity.vo.res.UserViewResp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +16,6 @@ import java.util.List;
 * @createDate 2024-07-22 20:24:46
 * @Entity generator.entity.VisitLog
 */
-@Mapper
 public interface VisitLogMapper extends BaseMapper<VisitLog> {
 
     List<VisitLog> selectVisitLogRespList(@Param("param") LogQuery logQuery);

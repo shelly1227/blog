@@ -3,9 +3,9 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Category;
-import com.shelly.entity.vo.Response.CategoryBackResp;
-import com.shelly.entity.vo.Response.CategoryResp;
-import com.shelly.entity.vo.Query.CategoryQuery;
+import com.shelly.entity.vo.res.CategoryBackResp;
+import com.shelly.entity.vo.res.CategoryResp;
+import com.shelly.entity.vo.query.CategoryQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +17,6 @@ import java.util.List;
 * @createDate 2024-07-22 20:24:46
 * @Entity generator.entity.Category
 */
-@Mapper
 public interface CategoryMapper extends BaseMapper<Category> {
     //查询出所有分类的id，文章数量，分类名，父级id，创建时间
     List<CategoryBackResp> selectBackCategoryList(@Param("param") CategoryQuery categoryQuery);

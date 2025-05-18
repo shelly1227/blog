@@ -17,7 +17,7 @@
         id,role_name,role_desc,
         is_disable,create_time,update_time
     </sql>
-    <select id="selectBackRoleList" resultType="com.shelly.entity.vo.Response.RoleResp">
+    <select id="selectBackRoleList" resultType="com.shelly.entity.vo.res.RoleResp">
         SELECT id,
         role_name,
         role_desc,
@@ -42,7 +42,7 @@
         WHERE ur.user_id = #{userId}
           AND r.is_disable = 0
     </select>
-    <select id="selectUserRoleList" resultType="com.shelly.entity.vo.Response.UserRoleResp">
+    <select id="selectUserRoleList" resultType="com.shelly.entity.vo.res.UserRoleResp">
         select id, role_name
         from t_role
     </select>

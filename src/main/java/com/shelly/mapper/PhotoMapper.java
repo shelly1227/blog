@@ -1,8 +1,8 @@
 package com.shelly.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Photo;
-import com.shelly.entity.vo.Query.PhotoQuery;
-import com.shelly.entity.vo.Response.PhotoBackResp;
+import com.shelly.entity.vo.query.PhotoQuery;
+import com.shelly.entity.vo.res.PhotoBackResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

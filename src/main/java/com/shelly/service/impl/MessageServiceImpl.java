@@ -8,26 +8,28 @@ import com.shelly.constants.CommonConstant;
 import com.shelly.entity.pojo.Message;
 import com.shelly.entity.pojo.SiteConfig;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.MessageQuery;
-import com.shelly.entity.vo.Request.CheckReq;
-import com.shelly.entity.vo.Request.MessageReq;
-import com.shelly.entity.vo.Response.MessageBackResp;
-import com.shelly.entity.vo.Response.MessageResp;
+import com.shelly.entity.vo.query.MessageQuery;
+import com.shelly.entity.vo.req.CheckReq;
+import com.shelly.entity.vo.req.MessageReq;
+import com.shelly.entity.vo.res.MessageBackResp;
+import com.shelly.entity.vo.res.MessageResp;
 import com.shelly.service.MessageService;
 import com.shelly.mapper.MessageMapper;
 import com.shelly.service.SiteConfigService;
 import com.shelly.utils.HTMLUtils;
 import com.shelly.utils.IpUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 
 /**
 * @author Shelly6
@@ -68,7 +70,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
         //这里的意思是判断是否要进行审核，这是可以设置的
         SiteConfig siteConfig = siteConfigService.getSiteConfig();
         Integer messageCheck = siteConfig.getMessageCheck();
-        String ipAddress = ServletUtil.getClientIP(request);
+        String ipAddress = getClientIP(request);
         String ipSource = IpUtils.getIpSource(ipAddress);
         Message newMessage = new Message();
         BeanUtils.copyProperties(message, newMessage);

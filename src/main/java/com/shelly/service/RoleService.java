@@ -3,10 +3,10 @@ package com.shelly.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shelly.entity.pojo.Role;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.RoleQuery;
-import com.shelly.entity.vo.Request.RoleReq;
-import com.shelly.entity.vo.Request.RoleStatusReq;
-import com.shelly.entity.vo.Response.RoleResp;
+import com.shelly.entity.vo.query.RoleQuery;
+import com.shelly.entity.vo.req.RoleReq;
+import com.shelly.entity.vo.req.RoleStatusReq;
+import com.shelly.entity.vo.res.RoleResp;
 
 import java.util.List;
 

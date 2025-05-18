@@ -1,7 +1,7 @@
 package com.shelly.strategy.impl;
 
 import com.shelly.constants.ElasticConstant;
-import com.shelly.entity.vo.Response.ArticleSearchResp;
+import com.shelly.entity.vo.res.ArticleSearchResp;
 import com.shelly.mapper.ArticleMapper;
 import com.shelly.strategy.SearchStrategy;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service("mySqlSearchStrategyImpl")
 public class MysqlSearchStrategyImpl implements SearchStrategy {

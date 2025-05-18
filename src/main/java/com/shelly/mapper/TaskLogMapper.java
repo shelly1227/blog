@@ -4,8 +4,8 @@ import com.github.houbb.heaven.annotation.reflect.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.TaskLog;
-import com.shelly.entity.vo.Response.TaskLogResp;
-import com.shelly.entity.vo.Query.TaskQuery;
+import com.shelly.entity.vo.res.TaskLogResp;
+import com.shelly.entity.vo.query.TaskQuery;
 
 import java.util.List;
 

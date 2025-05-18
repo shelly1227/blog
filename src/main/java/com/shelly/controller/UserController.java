@@ -4,40 +4,45 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.OnlineUserQuery;
-import com.shelly.entity.vo.Query.UserQuery;
-import com.shelly.entity.vo.Request.DisableReq;
-import com.shelly.entity.vo.Request.PasswordReq;
-import com.shelly.entity.vo.Request.UserRoleReq;
-import com.shelly.entity.vo.Response.*;
+import com.shelly.entity.vo.query.OnlineUserQuery;
+import com.shelly.entity.vo.query.UserQuery;
+import com.shelly.entity.vo.req.DisableReq;
+import com.shelly.entity.vo.req.PasswordReq;
+import com.shelly.entity.vo.req.UserRoleReq;
+import com.shelly.entity.vo.res.*;
 import com.shelly.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "用户模块")
+@Tag(name = "用户模块")
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     @GetMapping("/admin/user/getUserInfo")
+    @Operation(summary = "获取用户信息")
     public Result<UserBackInfoResp> getUserBackInfo() {
         return Result.success(userService.getUserBackInfo());
     }
 
 
     @GetMapping("/admin/user/getUserMenu")
+    @Operation(summary = "获取用户菜单")
     public Result<List<RouterResp>> getUserMenu() {
         return Result.success(userService.getUserMenu());
     }
 
 
     @SaCheckPermission("system:user:list")
+    @Operation(summary = "获取用户列表")
     @GetMapping("/admin/user/list")
     public Result<PageResult<UserBackResp>> listUserBackVO(UserQuery userQuery) {
         return Result.success(userService.listUserBackVO(userQuery));
@@ -48,7 +53,7 @@ public class UserController {
      *
      * @return {@link UserRoleResp} 用户角色选项
      */
-    @ApiOperation(value = "查看用户角色选项")
+    @Operation(summary = "查看用户角色选项")
     @SaCheckPermission("system:user:list")
     @GetMapping("/admin/user/role")
     public Result<List<UserRoleResp>> listUserRoleDTO() {
@@ -61,7 +66,7 @@ public class UserController {
      * @param user 用户信息
      * @return {@link Result<>}
      */
-    @ApiOperation(value = "修改用户")
+    @Operation(summary = "修改用户")
     @SaCheckPermission("system:user:update")
     @PutMapping("/admin/user/update")
     public Result<?> updateUser(@Validated @RequestBody UserRoleReq user) {
@@ -72,6 +77,7 @@ public class UserController {
 
     @SaCheckPermission("system:user:status")
     @PutMapping("/admin/user/changeStatus")
+    @Operation(summary = "修改用户状态")
     public Result<?> updateUserStatus(@Validated @RequestBody DisableReq disable) {
         userService.updateUserStatus(disable);
         return Result.success();
@@ -83,7 +89,7 @@ public class UserController {
      * @param onlineUserQuery 查询条件
      * @return {@link OnlineUserResp} 在线用户列表
      */
-    @ApiOperation(value = "查看在线用户")
+    @Operation(summary = "查看在线用户")
     @SaCheckPermission("monitor:online:list")
     @GetMapping("/admin/online/list")
     public Result<PageResult<OnlineUserResp>> listOnlineUser(OnlineUserQuery onlineUserQuery) {
@@ -98,6 +104,7 @@ public class UserController {
      */
     @SaCheckPermission("monitor:online:kick")
     @GetMapping("/admin/online/kick/{token}")
+    @Operation(summary = "下线用户")
     public Result<?> kickOutUser(@PathVariable("token") String token) {
         userService.kickOutUser(token);
         return Result.success();
@@ -110,7 +117,7 @@ public class UserController {
      * @return {@link Result<>}
      */
     @SaCheckRole("1")
-    @ApiOperation(value = "修改管理员密码")
+    @Operation(summary = "修改管理员密码")
     @PutMapping("/admin/password")
     public Result<?> updateAdminPassword(@Validated @RequestBody PasswordReq password) {
         userService.updateAdminPassword(password);

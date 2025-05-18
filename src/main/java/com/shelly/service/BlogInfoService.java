@@ -10,18 +10,20 @@ import com.shelly.constants.RedisConstant;
 
 import com.shelly.entity.pojo.Article;
 import com.shelly.entity.pojo.SiteConfig;
-import com.shelly.entity.vo.Response.CategoryResp;
-import com.shelly.entity.vo.Response.*;
+import com.shelly.entity.vo.res.CategoryResp;
+import com.shelly.entity.vo.res.*;
 import com.shelly.enums.ArticleStatusEnum;
 import com.shelly.mapper.*;
 import com.shelly.utils.UserAgentUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class BlogInfoService {
     private final UserMapper userMapper;
     public void report() {
         // 获取用户ip
-        String ipAddress = ServletUtil.getClientIP(request);
+        String ipAddress =getClientIP(request);
         Map<String, String> userAgentMap = UserAgentUtils.parseOsAndBrowser(request.getHeader("User-Agent"));
         // 获取访问设备
         String browser = userAgentMap.get("browser");

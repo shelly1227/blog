@@ -1,6 +1,6 @@
 package com.shelly.strategy;
 
-import com.shelly.entity.vo.Response.ArticleSearchResp;
+import com.shelly.entity.vo.res.ArticleSearchResp;
 
 import java.util.List;
 

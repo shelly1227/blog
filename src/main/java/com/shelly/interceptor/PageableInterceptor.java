@@ -3,12 +3,12 @@ package com.shelly.interceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shelly.constants.PageConstant;
 import com.shelly.utils.PageUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 public class PageableInterceptor implements HandlerInterceptor {

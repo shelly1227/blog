@@ -3,7 +3,7 @@ package com.shelly.service.impl;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import com.shelly.constants.ElasticConstant;
-import com.shelly.entity.vo.Response.ArticleSearchResp;
+import com.shelly.entity.vo.res.ArticleSearchResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

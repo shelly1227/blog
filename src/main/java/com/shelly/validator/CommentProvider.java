@@ -1,5 +1,5 @@
 package com.shelly.validator;
-import com.shelly.entity.vo.Request.CommentReq;
+import com.shelly.entity.vo.req.CommentReq;
 import com.shelly.validator.groups.ArticleTalk;
 import com.shelly.validator.groups.Link;
 import com.shelly.validator.groups.ParentIdNotNull;

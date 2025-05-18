@@ -2,7 +2,7 @@ package com.shelly.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.shelly.entity.pojo.Friend;
-import com.shelly.entity.vo.Response.FriendResp;
+import com.shelly.entity.vo.res.FriendResp;
 
 import java.util.List;
 

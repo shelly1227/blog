@@ -7,14 +7,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shelly.common.ServiceException;
 
 import com.shelly.entity.pojo.BlogFile;
-import com.shelly.entity.vo.Response.FileResp;
-import com.shelly.entity.vo.Request.FolderReq;
+import com.shelly.entity.vo.res.FileResp;
+import com.shelly.entity.vo.req.FolderReq;
 import com.shelly.entity.vo.PageResult;
-import com.shelly.entity.vo.Query.FileQuery;
+import com.shelly.entity.vo.query.FileQuery;
 import com.shelly.service.BlogFileService;
 import com.shelly.mapper.BlogFileMapper;
 import com.shelly.strategy.context.UploadStrategyContext;
 import com.shelly.utils.FileUtils;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -26,8 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
