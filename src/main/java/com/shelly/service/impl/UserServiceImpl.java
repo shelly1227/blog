@@ -2,13 +2,13 @@ package com.shelly.service.impl;
 
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shelly.common.ServiceException;
 import com.shelly.constants.CommonConstant;
-import com.shelly.constants.RedisConstant;
 
 import com.shelly.entity.pojo.User;
 import com.shelly.entity.pojo.UserRole;
@@ -18,14 +18,17 @@ import com.shelly.entity.vo.query.UserQuery;
 import com.shelly.entity.vo.req.*;
 import com.shelly.entity.vo.res.*;
 import com.shelly.enums.FilePathEnum;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.MenuMapper;
 import com.shelly.mapper.RoleMapper;
 import com.shelly.mapper.UserRoleMapper;
-import com.shelly.service.RedisService;
 import com.shelly.service.UserService;
 import com.shelly.mapper.UserMapper;
 import com.shelly.strategy.context.UploadStrategyContext;
+import com.shelly.utils.RedisUtil;
 import com.shelly.utils.SecurityUtils;
+import com.shelly.utils.cache.Cache;
+import com.shelly.utils.cache.CacheParam;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -46,10 +49,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService {
     private final UploadStrategyContext uploadStrategyContext;
     private final UserMapper userMapper;
-    private final RedisService redisService;
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
     private final MenuMapper menuMapper;
+    private final RedisUtil redisUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -76,9 +79,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userMapper.updateById(newUser);
     }
     public void verifyCode(String username, String code) {
-        String sysCode = redisService.getObject(RedisConstant.CODE_KEY + username);
-        Assert.notBlank(sysCode, "验证码未发送或已过期！");
-        Assert.isTrue(sysCode.equals(code), "验证码错误，请重新输入！");
+        String redisKeyPrefix = RedisConstants.VERIFICATION_CODE.getKey();
+        String redisKey = redisKeyPrefix + username;
+        if (redisUtil.getObject(redisKey) == null || redisUtil.getTime(redisKey) == 0) {
+            throw new ServiceException("验证码过期");
+        }
+        // 验证验证码是否匹配
+        if (!code.equals(redisUtil.getObject(redisKey).toString())) {
+            throw new ServiceException("验证码错误");
+        }
     }
     @Override
     public UserInfoResp getUserInfo() {
@@ -87,9 +96,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .select(User::getNickname, User::getAvatar, User::getUsername, User::getWebSite,
                         User::getIntro, User::getEmail, User::getLoginType)
                 .eq(User::getId, userId));
-        Set<Object> articleLikeSet = redisService.getSet(RedisConstant.USER_ARTICLE_LIKE + userId);
-        Set<Object> commentLikeSet = redisService.getSet(RedisConstant.USER_COMMENT_LIKE + userId);
-        Set<Object> talkLikeSet = redisService.getSet(RedisConstant.USER_TALK_LIKE + userId);
+        Set<Object> articleLikeSet = redisUtil.members(RedisConstants.USER_ARTICLE_LIKE.getKey() + userId);
+        Set<Object> commentLikeSet = redisUtil.members(RedisConstants.USER_COMMENT_LIKE.getKey() + userId);
+        Set<Object> talkLikeSet = redisUtil.members(RedisConstants.USER_TALK_LIKE.getKey() + userId);
         return UserInfoResp
                 .builder()
                 .id(userId)
@@ -143,7 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         List<String> permissionList = StpUtil.getPermissionList().stream()
                 .filter(string -> !string.isEmpty())
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
         return UserBackInfoResp.builder()
                 .id(userId)
                 .avatar(user.getAvatar())
@@ -153,15 +162,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public List<RouterResp> getUserMenu() {
+    @Cache(constants = RedisConstants.USER_MENU)
+    public List<RouterResp> getUserMenu(@CacheParam int userId) {
         // 查询用户菜单,只查询出来M，C，不包括B，因为它没有子菜单
-        List<UserMenuResp> userMenuRespList = menuMapper.selectMenuByUserId(StpUtil.getLoginIdAsInt());
+        List<UserMenuResp> userMenuRespList = menuMapper.selectMenuByUserId(userId);
         // 递归生成路由,parentId为0
         return recurRoutes(CommonConstant.PARENT_ID, userMenuRespList);
     }
     private List<RouterResp> recurRoutes(Integer parentId, List<UserMenuResp> menuList) {
         List<RouterResp> list = new ArrayList<>();
-        //TODO 好复杂
         Optional.ofNullable(menuList).ifPresent(menus -> menus.stream()
                 //过滤出已经不需要递归查找的菜单
                 .filter(menu -> menu.getParentId().equals(parentId))
@@ -177,7 +186,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                             .build());
                     if (menu.getMenuType().equals(CommonConstant.TYPE_DIR)) {
                         List<RouterResp> children = recurRoutes(menu.getId(), menuList);
-                        if (CollectionUtil.isNotEmpty(children)) {
+                        if (CollUtil.isNotEmpty(children)) {
                             routeVO.setAlwaysShow(true);
                             routeVO.setRedirect("noRedirect");
                         }
@@ -278,8 +287,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 重新添加用户角色
         userRoleMapper.insertUserRole(user.getId(), user.getRoleIdList());
         // 删除Redis缓存中的角色
-        SaSession sessionByLoginId = StpUtil.getSessionByLoginId(user.getId(), false);
-        Optional.ofNullable(sessionByLoginId).ifPresent(saSession -> saSession.delete("Role_List"));
+        redisUtil.remove(RedisConstants.USER + user.getId().toString());
+        redisUtil.remove(RedisConstants.USER_INFO + user.getId().toString());
     }
 
     @Override
@@ -299,7 +308,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 })
                 .filter(onlineUserResp -> StringUtils.isEmpty(onlineUserQuery.getKeyword()) || onlineUserResp.getNickname().contains(onlineUserQuery.getKeyword()))
                 .sorted(Comparator.comparing(OnlineUserResp::getLoginTime).reversed())
-                .collect(Collectors.toList());
+                .toList();
         // 执行分页
         int fromIndex = onlineUserQuery.getCurrent();
         int size = onlineUserQuery.getSize();

@@ -3,7 +3,7 @@ package com.shelly.controller;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.res.BlogBackInfoResp;
 import com.shelly.entity.vo.res.BlogInfoResp;
-import com.shelly.service.BlogInfoService;
+import com.shelly.service.impl.BlogInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "博客信息模块")
 @RestController
 @RequiredArgsConstructor
+//checked
 public class BlogInfoController {
     private final BlogInfoService blogInfoService;
 

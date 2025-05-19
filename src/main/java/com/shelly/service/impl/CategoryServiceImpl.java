@@ -3,6 +3,7 @@ package com.shelly.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import com.shelly.common.ServiceException;
 import com.shelly.entity.pojo.Article;
 import com.shelly.entity.pojo.Category;
 import com.shelly.entity.vo.res.CategoryBackResp;
@@ -45,8 +46,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
                 .select(Category::getId)
                 .eq(Category::getCategoryName, category.getCategoryName()));
         if (existCategory != null) {
-            throw new IllegalArgumentException("分类已存在");
-            // Assert.isNull(existCategory, category.getCategoryName() + "分类已存在");
+            throw new ServiceException("分类已存在");
         }
         Category newCategory = Category.builder()
                 .categoryName(category.getCategoryName())
@@ -56,35 +56,35 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
 
     @Override
     public void deleteCategory(List<Integer> categoryIdList) {
-        LambdaQueryWrapper <Article> Wrapper = new LambdaQueryWrapper<>();
-        Wrapper.in(Article::getCategoryId, categoryIdList);
-        if (articleMapper.selectCount(Wrapper) > 0) {
+        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(Article::getCategoryId, categoryIdList);
+        if (articleMapper.selectCount(wrapper) > 0) {
             throw new IllegalArgumentException("该分类下存在文章，无法删除");
         }
-        categoryMapper.deleteBatchIds(categoryIdList);
+        categoryMapper.deleteByIds(categoryIdList);
     }
 
     @Override
     public PageResult<CategoryBackResp> listCategory(CategoryQuery categoryQuery) {
-        LambdaQueryWrapper <Category> Wrapper = new LambdaQueryWrapper<>();
-Wrapper.like(StringUtils.hasText(categoryQuery.getKeyword()),Category::getCategoryName, categoryQuery.getKeyword());
-               if(categoryMapper.selectCount(Wrapper)  ==  0){
+        LambdaQueryWrapper <Category> wrapper = new LambdaQueryWrapper<>();
+wrapper.like(StringUtils.hasText(categoryQuery.getKeyword()),Category::getCategoryName, categoryQuery.getKeyword());
+               if(categoryMapper.selectCount(wrapper)  ==  0){
                    return new PageResult<>();
                }
         //查出所有的分类id，无论父级子级
-        List<CategoryBackResp> categoryBackResps = categoryMapper.selectBackCategoryList(categoryQuery);
+        List<CategoryBackResp> categoryBackResp = categoryMapper.selectBackCategoryList(categoryQuery);
         // 搜集当前分类id列表
-        Set<Integer> categoryIdList = categoryBackResps.stream()
+        Set<Integer> categoryIdList = categoryBackResp.stream()
                 .map(CategoryBackResp::getId)
                 .collect(Collectors.toSet());
 
-        List<CategoryBackResp> res = categoryBackResps.stream()
+        List<CategoryBackResp> res = categoryBackResp.stream()
                 .map(category -> {
                     Integer parentId = category.getParentId();
                     // parentId不在当前分类id列表，说明为父级分类id，根据此id作为递归的开始条件节点
                     if (!categoryIdList.contains(parentId)) {
                         categoryIdList.add(parentId);
-                        return recurCategoryList(categoryBackResps, parentId, 0, maxDeep);
+                        return recurCategoryList(categoryBackResp, parentId, 0, maxDeep);
                     }
                     //注意，这里的两次返回，只会进入一个，是父级ID返回所有子节点，否则返回null
                     return new ArrayList<CategoryBackResp>();
@@ -94,7 +94,7 @@ Wrapper.like(StringUtils.hasText(categoryQuery.getKeyword()),Category::getCatego
         //第一个元素在整个列表中的索引
         int fromIndex = categoryQuery.getCurrent();
         int size = categoryQuery.getSize();
-        int toIndex = categoryBackResps.size() - fromIndex > size ? fromIndex + size : res.size();
+        int toIndex = categoryBackResp.size() - fromIndex > size ? fromIndex + size : res.size();
         return new PageResult<>(res.subList(fromIndex, toIndex), (long) res.size());
     }
 

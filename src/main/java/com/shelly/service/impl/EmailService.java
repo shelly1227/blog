@@ -1,4 +1,4 @@
-package com.shelly.service;
+package com.shelly.service.impl;
 
 import com.shelly.entity.dto.MailDTO;
 import jakarta.mail.MessagingException;

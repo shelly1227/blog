@@ -24,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "图片模块")
+//checked but file upload
 public class PhotoController {
     private final PhotoService photoService;
     @PostMapping("/admin/photo/add")

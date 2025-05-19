@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "角色模块")
+//checked but session
 public class RoleController {
 
     private final RoleService roleService;

@@ -32,6 +32,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "说说模块")
+//checked but upload error
 public class TalkController {
 
     private final TalkService talkService;

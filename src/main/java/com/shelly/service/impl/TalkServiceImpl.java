@@ -15,13 +15,14 @@ import com.shelly.entity.vo.res.TalkBackInfoResp;
 import com.shelly.entity.vo.res.TalkBackResp;
 import com.shelly.entity.vo.res.TalkResp;
 import com.shelly.enums.FilePathEnum;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.CommentMapper;
-import com.shelly.service.RedisService;
 import com.shelly.service.TalkService;
 import com.shelly.mapper.TalkMapper;
 import com.shelly.strategy.context.UploadStrategyContext;
 import com.shelly.utils.CommonUtils;
 import com.shelly.utils.HTMLUtils;
+import com.shelly.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.shelly.constants.RedisConstant.TALK_LIKE_COUNT;
 import static com.shelly.enums.ArticleStatusEnum.PUBLIC;
 import static com.shelly.enums.CommentTypeEnum.TALK;
 
@@ -49,7 +49,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk>
     private final TalkMapper talkMapper;
     private final BlogFileServiceImpl blogFileService;
     private final UploadStrategyContext uploadStrategyContext;
-    private final RedisService redisService;
+    private final RedisUtil redisService;
     private final CommentMapper commentMapper;
 
     @Override
@@ -123,7 +123,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk>
                 .map(item -> item.getTalkContent().length() > 200
                         ? HTMLUtils.deleteHtmlTag(item.getTalkContent().substring(0, 200))
                         : HTMLUtils.deleteHtmlTag(item.getTalkContent()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -138,12 +138,12 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk>
         // 查询说说评论量
         List<Integer> talkIdList = talkRespList.stream()
                 .map(TalkResp::getId)
-                .collect(Collectors.toList());
+                .toList();
         List<CommentCountResp> commentCountVOList = commentMapper.selectCommentCountByTypeId(talkIdList, TALK.getType());
         Map<Integer, Integer> commentCountMap = commentCountVOList.stream()
                 .collect(Collectors.toMap(CommentCountResp::getId, CommentCountResp::getCommentCount));
         // 查询说说点赞量
-        Map<String, Integer> likeCountMap = redisService.getHashAll(TALK_LIKE_COUNT);
+        Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstants.TALK_LIKE_COUNT.getKey());
         // 封装说说
         talkRespList.forEach(item -> {
             item.setLikeCount(Optional.ofNullable(likeCountMap.get(item.getId().toString())).orElse(0));
@@ -164,7 +164,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk>
             return null;
         }
         // 查询说说点赞量
-        Integer likeCount = redisService.getHash(TALK_LIKE_COUNT, talkId.toString());
+        Integer likeCount = redisService.getHash(RedisConstants.TALK_LIKE_COUNT.getKey(), talkId.toString());
         talkResp.setLikeCount(Optional.ofNullable(likeCount).orElse(0));
         // 转换图片格式
         if (Objects.nonNull(talkResp.getImages())) {

@@ -2,6 +2,7 @@ package com.shelly.service.impl;
 
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.session.SaSessionCustomUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,16 +14,17 @@ import com.shelly.entity.vo.query.RoleQuery;
 import com.shelly.entity.vo.req.RoleReq;
 import com.shelly.entity.vo.req.RoleStatusReq;
 import com.shelly.entity.vo.res.RoleResp;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.RoleMenuMapper;
 import com.shelly.mapper.UserRoleMapper;
 import com.shelly.service.RoleService;
 import com.shelly.mapper.RoleMapper;
+import com.shelly.service.UserRoleService;
+import com.shelly.utils.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
 * @author Shelly6
@@ -36,6 +38,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     private final RoleMapper roleMapper;
     private final RoleMenuMapper roleMenuMapper;
     private final UserRoleMapper userRoleMapper;
+    private final UserRoleService userRoleService;
 
     @Override
     public PageResult<RoleResp> listRoleVO(RoleQuery roleQuery) {
@@ -77,7 +80,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         Long count = userRoleMapper.selectCount(new LambdaQueryWrapper<UserRole>().in(UserRole::getRoleId, roleIdList));
         Assert.isFalse(count > 0, "角色已分配");
         // 删除角色
-        roleMapper.deleteBatchIds(roleIdList);
+        roleMapper.deleteByIds(roleIdList);
         // 批量删除角色关联的菜单权限
         roleMenuMapper.deleteRoleMenu(roleIdList);
         // 删除Redis缓存中的菜单权限
@@ -125,6 +128,22 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         // 删除Redis缓存中的菜单权限
         SaSession sessionById = SaSessionCustomUtil.getSessionById("role-" + newRole.getId(), false);
         Optional.ofNullable(sessionById).ifPresent(saSession -> saSession.delete("Permission_List"));
+    }
+
+    @Override
+    @Cache(constants = RedisConstants.USER_ROLE)
+    public List<String> getRoleNameByUser(long id) {
+        return getRoleByUser(id).stream().map(Role::getRoleName).toList();
+    }
+
+    private List<Role> getRoleByUser(long id) {
+        List<String> roleIdList = userRoleService.lambdaQuery().select(UserRole::getRoleId)
+                .eq(UserRole::getUserId, id).list()
+                .stream().map(UserRole::getRoleId).toList();
+        if(CollUtil.isEmpty(roleIdList)){
+            return Collections.emptyList();
+        }
+        return lambdaQuery().in(Role::getId,roleIdList).list();
     }
 
 }

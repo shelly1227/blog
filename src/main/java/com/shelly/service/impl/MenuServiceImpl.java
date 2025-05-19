@@ -11,17 +11,17 @@ import com.shelly.entity.vo.req.MenuReq;
 import com.shelly.entity.vo.res.MenuOptionResp;
 import com.shelly.entity.vo.res.MenuResp;
 import com.shelly.entity.vo.res.MenuTreeResp;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.RoleMenuMapper;
 import com.shelly.service.MenuService;
 import com.shelly.mapper.MenuMapper;
+import com.shelly.utils.cache.Cache;
+import com.shelly.utils.cache.CacheParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -74,7 +74,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
         BeanUtils.copyProperties(menu, menuReq);
         return menuReq;
     }
-//TODO
     @Override
     public List<MenuOptionResp> listMenuOption() {
         // 获取菜单树
@@ -120,24 +119,50 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
         baseMapper.updateById(newMenu);
     }
 
+    @Override
+    @Cache(constants = RedisConstants.USER_PERMISSION)
+    public List<String> getPermissionByUser(@CacheParam long id) {
+        List<Menu> allPermissions = list();
+        List<Menu> permissions = baseMapper.getPermissionByUser(id);
+        return getSubPermissions(allPermissions, permissions).stream().map(Menu::getPerms).toList();
+    }
+
+    private static Set<Menu> getSubPermissions(List<Menu> allPermissions, List<Menu> permissions) {
+        Set<Menu> subPermissions = new HashSet<>();
+        for (Menu parentPermission : permissions) {
+            subPermissions.add(parentPermission);
+            getSubPermissionRecursively(allPermissions, parentPermission.getId(), subPermissions);
+        }
+        return subPermissions;
+    }
+
+    private static void getSubPermissionRecursively(List<Menu> allPermissions, Integer id, Set<Menu> subPermissions) {
+        for (Menu permission : allPermissions) {
+            if (permission.getParentId().equals(id)) {
+                subPermissions.add(permission);
+                getSubPermissionRecursively(allPermissions, permission.getId(), subPermissions);
+            }
+        }
+    }
+
     private List<MenuResp> recurMenuList(Integer parentId, List<MenuResp> menuList) {
         return menuList.stream()
                 .filter(menuVO -> menuVO.getParentId().equals(parentId))
                 .peek(menuVO -> menuVO.setChildren(recurMenuList(menuVO.getId(), menuList)))
-                .collect(Collectors.toList());
+                .toList();
     }
     private List<MenuOptionResp> recurMenuOptionList(Integer parentId, List<MenuOptionResp> menuOptionList) {
         return menuOptionList.stream()
                 .filter(menu -> menu.getParentId().equals(parentId))
                 .peek(menu -> menu.setChildren(recurMenuOptionList(menu.getValue(), menuOptionList)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<MenuTreeResp> recurMenuTreeList(Integer parentId, List<MenuTreeResp> menuTreeRespList) {
         return menuTreeRespList.stream()
                 .filter(menu -> menu.getParentId().equals(parentId))
                 .peek(menu -> menu.setChildren(recurMenuTreeList(menu.getId(), menuTreeRespList)))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
 

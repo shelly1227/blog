@@ -43,7 +43,7 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend>
 
     @Override
     public void deleteFriend(List<Integer> integerList) {
-        baseMapper.deleteBatchIds(integerList);
+        baseMapper.deleteByIds(integerList);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend>
                     BeanUtils.copyProperties(friend, dto);
                     return dto;
                 })
-                .collect(Collectors.toList());
+                .toList();
         // 返回分页结果
         return new PageResult<>(friendBackDTOList, friendPage.getTotal());
     }

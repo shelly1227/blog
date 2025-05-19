@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shelly.constants.CommonConstant;
-import com.shelly.constants.MqConstant;
-import com.shelly.constants.RedisConstant;
 
 import com.shelly.entity.dto.MailDTO;
 import com.shelly.entity.pojo.*;
@@ -18,16 +16,16 @@ import com.shelly.entity.vo.req.CheckReq;
 import com.shelly.entity.vo.req.CommentReq;
 import com.shelly.entity.vo.res.*;
 import com.shelly.enums.CommentTypeEnum;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.ArticleMapper;
 import com.shelly.mapper.TalkMapper;
 import com.shelly.mapper.UserMapper;
 import com.shelly.service.CommentService;
 import com.shelly.mapper.CommentMapper;
-import com.shelly.service.EmailService;
-import com.shelly.service.RedisService;
 import com.shelly.service.SiteConfigService;
 import com.shelly.utils.HTMLUtils;
 import com.shelly.utils.PageUtils;
+import com.shelly.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +48,7 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     implements CommentService{
     private final CommentMapper commentMapper;
-    private final RedisService redisService;
+    private final RedisUtil redisService;
     private final ArticleMapper articleMapper;
     private final TalkMapper talkMapper;
     private final UserMapper userMapper;
@@ -93,7 +91,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             return new PageResult<>();
         }
         // 评论点赞
-        Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstant.COMMENT_LIKE_COUNT);
+        Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstants.COMMENT_LIKE_COUNT.getKey());
         // 父评论id集合
         List<Integer> parentCommentIdList = commentRespList.stream().map(CommentResp::getId).toList();
         // 分组查询每组父评论下的子评论前三条，注意，这里是先全部混装在一起，再根据parentId分组
@@ -125,7 +123,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         // 分页查询子评论
         List<ReplyResp> replyRespList = commentMapper.selectReplyByParentId(PageUtils.getLimit(), PageUtils.getSize(), commentId);
         // 子评论点赞Map
-        Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstant.COMMENT_LIKE_COUNT);
+        Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstants.COMMENT_LIKE_COUNT.getKey());
         replyRespList.forEach(item -> item.setLikeCount(likeCountMap.get(item.getId().toString())));
         return replyRespList;
     }
@@ -295,8 +293,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 mailDTO.setContentMap(contentMap);
             }
             // 发送HTML邮件
-            rabbitTemplate.convertAndSend(MqConstant.EMAIL_EXCHANGE, MqConstant.EMAIL_HTML_KEY, mailDTO);
-            //CompletableFuture.runAsync(() -> emailService.sendHtmlMail(mailDTO), threadPoolTaskExecutor);
+            //rabbitTemplate.convertAndSend(MqConstant.EMAIL_EXCHANGE, MqConstant.EMAIL_HTML_KEY, mailDTO);
+            CompletableFuture.runAsync(() -> emailService.sendHtmlMail(mailDTO), threadPoolTaskExecutor);
         } else {
             // 审核提醒
             String adminEmail = userMapper.selectOne(new LambdaQueryWrapper<User>()
@@ -306,8 +304,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             mailDTO.setSubject(CommonConstant.CHECK_REMIND);
             mailDTO.setContent("您收到一条新的回复，请前往后台管理页面审核");
             // 发送普通邮件
-            rabbitTemplate.convertAndSend(MqConstant.EMAIL_EXCHANGE, MqConstant.EMAIL_SIMPLE_KEY, mailDTO);
-            //CompletableFuture.runAsync(() -> emailService.sendSimpleMail(mailDTO), threadPoolTaskExecutor);
+            //rabbitTemplate.convertAndSend(MqConstant.EMAIL_EXCHANGE, MqConstant.EMAIL_SIMPLE_KEY, mailDTO);
+            CompletableFuture.runAsync(() -> emailService.sendSimpleMail(mailDTO), threadPoolTaskExecutor);
         }
     }
 }

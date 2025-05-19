@@ -61,7 +61,7 @@ public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel>
     @Override
     public void updateCarousel(CarouselReqVo carouselReqVo) {
         Assert.notNull(carouselReqVo.getId(), "id is null");
-       Carousel carousel = new Carousel();
+        Carousel carousel = new Carousel();
         BeanUtils.copyProperties(carouselReqVo, carousel);
         carouselMapper.updateById(carousel);
     }

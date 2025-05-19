@@ -29,6 +29,8 @@ public interface MenuMapper extends BaseMapper<Menu> {
     List<String> selectPermissionByRoleId(@Param("roleId") String roleId);
 
     List<UserMenuResp> selectMenuByUserId(@Param("userId") Integer userId);
+
+    List<Menu> getPermissionByUser(long id);
 }
 
 

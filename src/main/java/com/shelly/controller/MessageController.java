@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "留言模块")
+//checked
 public class MessageController {
 
     private final MessageService messageService;

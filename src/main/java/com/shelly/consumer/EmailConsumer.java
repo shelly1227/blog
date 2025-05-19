@@ -1,7 +1,7 @@
 package com.shelly.consumer;
 
 import com.shelly.entity.dto.MailDTO;
-import com.shelly.service.EmailService;
+import com.shelly.service.impl.EmailService;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;

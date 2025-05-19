@@ -31,4 +31,6 @@ public interface MenuService extends IService<Menu> {
     List<MenuResp> listMenuVO(MenuQuery menuQuery);
 
     void updateMenu(MenuReq menu);
+
+    List<String> getPermissionByUser(long id);
 }

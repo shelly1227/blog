@@ -28,4 +28,6 @@ public interface RoleService extends IService<Role> {
     List<Integer> listRoleMenuTree(String roleId);
 
     void updateRole(RoleReq role);
+
+    List<String> getRoleNameByUser(long l);
 }

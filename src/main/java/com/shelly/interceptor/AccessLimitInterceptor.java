@@ -4,7 +4,7 @@ package com.shelly.interceptor;
 import com.alibaba.fastjson2.JSON;
 import com.shelly.annotation.AccessLimit;
 import com.shelly.common.Result;
-import com.shelly.service.RedisService;
+import com.shelly.utils.RedisUtil;
 import com.shelly.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 public class AccessLimitInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private RedisService redisService;
+    private RedisUtil redisService;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
@@ -44,10 +44,10 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
                 String requestUri = request.getRequestURI();
                 String redisKey = ip + ":" + method + ":" + requestUri;
                 try {
-                    Long count = redisService.incr(redisKey, 1L);
+                    Long count = redisService.increment(redisKey, 1L);
                     // 第一次访问
                     if (Objects.nonNull(count) && count == 1) {
-                        redisService.setExpire(redisKey, seconds, TimeUnit.SECONDS);
+                        redisService.expire(redisKey, seconds);
                     } else if (count > maxCount) {
                         WebUtils.renderString(response, JSON.toJSONString(Result.fail(accessLimit.msg())));
                         log.warn(redisKey + "请求次数超过每" + seconds + "秒" + maxCount + "次");

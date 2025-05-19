@@ -1,15 +1,14 @@
 package com.shelly.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.shelly.constants.RedisConstant;
 
 import com.shelly.entity.pojo.SiteConfig;
 import com.shelly.enums.FilePathEnum;
-import com.shelly.service.BlogFileService;
-import com.shelly.service.RedisService;
+import com.shelly.enums.RedisConstants;
 import com.shelly.service.SiteConfigService;
 import com.shelly.mapper.SiteConfigMapper;
 import com.shelly.strategy.context.UploadStrategyContext;
+import com.shelly.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +26,7 @@ public class SiteConfigServiceImpl extends ServiceImpl<SiteConfigMapper, SiteCon
     implements SiteConfigService {
     private final UploadStrategyContext uploadStrategyContext;
     private final BlogFileServiceImpl blogFileService;
-    private final RedisService redisService;
+    private final RedisUtil redisService;
     private final SiteConfigMapper siteConfigMapper;
 
     @Override
@@ -39,15 +38,13 @@ public class SiteConfigServiceImpl extends ServiceImpl<SiteConfigMapper, SiteCon
     }
 
     @Override
-    //TODO 修改数据库配置
     public SiteConfig getSiteConfig() {
-
-        SiteConfig siteConfig = redisService.getObject(RedisConstant.SITE_SETTING);
+        SiteConfig siteConfig = redisService.get(RedisConstants.SITE_SETTING.getKey(), SiteConfig.class);
         if (Objects.isNull(siteConfig)) {
             // 从数据库中加载
             siteConfig = siteConfigMapper.selectById(1);
             System.out.println("enter site config");
-            redisService.setObject(RedisConstant.SITE_SETTING, siteConfig);
+            redisService.set(RedisConstants.SITE_SETTING, siteConfig);
             System.out.println("enter sit config");
         }
         System.out.println("siteConfig = " + siteConfig);
@@ -57,7 +54,7 @@ public class SiteConfigServiceImpl extends ServiceImpl<SiteConfigMapper, SiteCon
     @Override
     public void updateSiteConfig(SiteConfig siteConfig) {
         baseMapper.updateById(siteConfig);
-        redisService.deleteObject(RedisConstant.SITE_SETTING);
+        redisService.remove(RedisConstants.SITE_SETTING.getKey());
     }
 }
 

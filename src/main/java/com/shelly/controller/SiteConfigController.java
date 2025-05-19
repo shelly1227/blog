@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "站点配置模块")
+//checked
 public class SiteConfigController {
 
     private final SiteConfigService siteConfigService;

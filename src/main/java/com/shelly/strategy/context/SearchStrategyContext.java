@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static com.shelly.enums.UploadModeEnum.getStrategy;
+import static com.shelly.enums.SearchModeEnum.getStrategy;
+
 
 @Service
 public class SearchStrategyContext {

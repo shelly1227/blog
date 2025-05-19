@@ -1,16 +1,18 @@
 package com.shelly.satoken;
 
-import cn.dev33.satoken.session.SaSession;
-import cn.dev33.satoken.session.SaSessionCustomUtil;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 
-import com.shelly.mapper.MenuMapper;
-import com.shelly.mapper.RoleMapper;
+import cn.hutool.core.collection.CollUtil;
+import com.shelly.enums.RedisConstants;
+import com.shelly.service.MenuService;
+import com.shelly.service.RoleService;
+import com.shelly.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,13 +22,11 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class StpInterfaceImpl implements StpInterface {
-
-
-    private final MenuMapper menuMapper;
-
-
-    private final RoleMapper roleMapper;
+    private final RedisUtil redisUtil;
+    private final MenuService menuService;
+    private final RoleService roleService;
 
     /**
      * 返回一个账号所拥有的权限码集合
@@ -37,16 +37,13 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        // 声明权限码集合
-        List<String> permissionList = new ArrayList<>();
-        // 遍历角色列表，查询拥有的权限码
-        for (String roleId : getRoleList(loginId, loginType)) {
-            SaSession roleSession = SaSessionCustomUtil.getSessionById("role-" + roleId);
-            List<String> list = roleSession.get("Permission_List", () -> menuMapper.selectPermissionByRoleId(roleId));
-            permissionList.addAll(list);
+        long id = StpUtil.getLoginIdAsLong();
+        List<String> permissions = menuService.getPermissionByUser(id);
+        if(permissions.isEmpty()){
+            return Collections.emptyList();
         }
-        // 返回权限码集合
-        return permissionList;
+        redisUtil.set(RedisConstants.USER_PERMISSION.getKey()+id,permissions);
+        return permissions;
     }
 
     /**
@@ -58,8 +55,12 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        SaSession session = StpUtil.getSessionByLoginId(loginId);
-        return session.get("Role_List", () -> roleMapper.selectRoleListByUserId(loginId));
+        List<String> roleNames =  roleService.getRoleNameByUser(Long.parseLong(loginId.toString()));
+        if(CollUtil.isEmpty(roleNames)){
+            return Collections.emptyList();
+        }
+        redisUtil.set(RedisConstants.USER_ROLE.getKey()+loginId,roleNames);
+        return roleNames;
     }
 
 }

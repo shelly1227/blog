@@ -1,19 +1,20 @@
-package com.shelly.service;
+package com.shelly.service.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.shelly.constants.CommonConstant;
-import com.shelly.constants.RedisConstant;
 
 import com.shelly.entity.pojo.Article;
 import com.shelly.entity.pojo.SiteConfig;
 import com.shelly.entity.vo.res.CategoryResp;
 import com.shelly.entity.vo.res.*;
 import com.shelly.enums.ArticleStatusEnum;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.*;
+import com.shelly.service.SiteConfigService;
+import com.shelly.utils.RedisUtil;
 import com.shelly.utils.UserAgentUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 
 @Service
 @RequiredArgsConstructor
 public class BlogInfoService {
-    private final RedisService redisService;
+    private final RedisUtil redisService;
     private final HttpServletRequest request;
     private final ArticleMapper articleMapper;
     private final CategoryMapper categoryMapper;
@@ -48,11 +48,11 @@ public class BlogInfoService {
         String uuid = ipAddress + browser + os;
         String md5 = DigestUtils.md5DigestAsHex(uuid.getBytes());
         // 判断是否访问
-        if (!redisService.hasSetValue(RedisConstant.UNIQUE_VISITOR, md5)) {
+        if (!redisService.sHasKey(RedisConstants.UNIQUE_VISITOR.getKey(), md5)) {
             // 访问量+1
-            redisService.incr(RedisConstant.BLOG_VIEW_COUNT, 1);
+            redisService.increment(RedisConstants.BLOG_VIEW_COUNT.getKey(), 1);
             // 保存唯一标识
-            redisService.setSet(RedisConstant.UNIQUE_VISITOR, md5);
+            redisService.setSet(RedisConstants.UNIQUE_VISITOR.getKey(), md5);
         }
     }
 
@@ -65,7 +65,7 @@ public class BlogInfoService {
         // 标签数量
         Long tagCount = tagMapper.selectCount(null);
         // 博客访问量
-        Integer count = redisService.getObject(RedisConstant.BLOG_VIEW_COUNT);
+        Integer count = redisService.get(RedisConstants.BLOG_VIEW_COUNT.getKey(), Integer.class);
         String viewCount = Optional.ofNullable(count).orElse(0).toString();
         // 网站配置
         SiteConfig siteConfig = siteConfigService.getSiteConfig();
@@ -80,7 +80,7 @@ public class BlogInfoService {
 
     public BlogBackInfoResp getBlogBackInfo() {
         // 访问量
-        Integer viewCount = redisService.getObject(RedisConstant.BLOG_VIEW_COUNT);
+        Integer viewCount = redisService.get(RedisConstants.BLOG_VIEW_COUNT.getKey(), Integer.class);
         // 留言量
         Long messageCount = messageMapper.selectCount(null);
         // 用户量
@@ -99,7 +99,7 @@ public class BlogInfoService {
         // 文章统计
         List<ArticleStatisticsResp> articleStatisticsList = articleMapper.selectArticleStatistics();
         // 查询redis访问量前五的文章
-        Map<Object, Double> articleMap = redisService.zReverseRangeWithScore(RedisConstant.ARTICLE_VIEW_COUNT, 0, 4);
+        Map<Object, Double> articleMap = redisService.zReverseRangeWithScore(RedisConstants.ARTICLE_VIEW_COUNT.getKey(), 0, 4);
         BlogBackInfoResp blogBackInfoResp = BlogBackInfoResp.builder()
                 .articleStatisticsList(articleStatisticsList)
                 .tagVOList(tagVOList)
@@ -132,11 +132,17 @@ public class BlogInfoService {
                         .viewCount(articleMap.get(article.getId()).intValue())
                         .build())
                 .sorted(Comparator.comparingInt(ArticleRankResp::getViewCount).reversed())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public String getAbout() {
-        SiteConfig siteConfig = redisService.getObject(RedisConstant.SITE_SETTING);
+        SiteConfig siteConfig = redisService.get(RedisConstants.SITE_SETTING.getKey(), SiteConfig.class);
+        if (siteConfig == null) {
+            siteConfig = siteConfigService.lambdaQuery()
+                    .eq(SiteConfig::getId, 1)
+                    .one();
+            redisService.set(RedisConstants.SITE_SETTING.getKey(), siteConfig, RedisConstants.SITE_SETTING.getTtl(), RedisConstants.SITE_SETTING.getTimeUnit());
+        }
         return siteConfig.getAboutMe();
     }
 }

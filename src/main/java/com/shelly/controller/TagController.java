@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @Tag(name = "标签模块")
 @RequiredArgsConstructor
+//CHECKED
 public class TagController {
     private final TagService tagService;
     @PostMapping("/admin/tag/add")

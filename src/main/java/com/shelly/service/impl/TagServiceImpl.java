@@ -59,7 +59,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
                 .in(ArticleTag::getTagId, tagIdList));
         Assert.isFalse(count > 0, "删除失败，标签下存在文章");
         // 批量删除标签
-        tagMapper.deleteBatchIds(tagIdList);
+        tagMapper.deleteByIds(tagIdList);
     }
 
     @Override

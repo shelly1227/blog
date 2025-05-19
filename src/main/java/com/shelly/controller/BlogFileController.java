@@ -18,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
- * @description: 博客管理
- * @author: shelly
+ * 博客管理
+ * @author shelly
  */
 @Slf4j
 @RestController

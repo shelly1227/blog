@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
 * @author Shelly6
@@ -58,7 +57,7 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoMapper, Photo>
                         .photoName(IdWorker.getIdStr())
                         .photoUrl(url)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         this.saveBatch(pictureList);
     }
 
@@ -82,7 +81,7 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoMapper, Photo>
 
     @Override
     public void deletePhoto(List<Integer> photoIdList) {
-        baseMapper.deleteBatchIds(photoIdList);
+        baseMapper.deleteByIds(photoIdList);
     }
 
     @Override
@@ -106,7 +105,7 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoMapper, Photo>
                         .id(photoId)
                         .albumId(photo.getAlbumId())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         this.updateBatchById(photoList);
     }
 
@@ -139,7 +138,7 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoMapper, Photo>
                     PhotoResp photoVO = new PhotoResp();
                     BeanUtils.copyProperties(item, photoVO);
                     return photoVO;
-                }).collect(Collectors.toList());
+                }).toList();
         result.put("albumName", albumName);
         result.put("photoVOList", photoVOList);
         return result;

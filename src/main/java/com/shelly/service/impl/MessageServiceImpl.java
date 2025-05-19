@@ -1,6 +1,5 @@
 package com.shelly.service.impl;
 
-import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shelly.constants.CommonConstant;
@@ -27,7 +26,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static cn.hutool.extra.servlet.JakartaServletUtil.getClientIP;
 
@@ -91,7 +89,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
                         .id(id)
                         .isCheck(check.getIsCheck())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         this.updateBatchById(messageList);
     }
 }

@@ -1,10 +1,17 @@
 package com.shelly.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,34 +19,76 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+/**
+ * redis 配置类
+ * @author shelly
+ */
 @Configuration
-public class RedisConfig {
+public class RedisConfig implements CachingConfigurer {
+
+    private static final String STANDARD_PATTERN = "yyyy/MM/dd HH:mm:ss";
+    private static final String DATE_PATTERN = "yyyy/MM/dd";
+    private static final String TIME_PATTERN = "HH:mm:ss";
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        // Json序列化配置
-        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        // 使用Jackson2JsonRedisSerialize 替换默认序列化
+
         ObjectMapper objectMapper = new ObjectMapper();
-        // 指定要序列化的域，field,get和set,以及修饰符范围，ANY是都有包括private和public
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        // 指定序列化输入的类型，类必须是非final修饰的，final修饰的类，比如String,Integer等会跑出异常
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-        // String序列化
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        // 使用String来序列化和反序列化key
-        template.setKeySerializer(stringRedisSerializer);
-        // 使用Jackson来序列化和反序列化value
+        objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.registerLocalDateTime(objectMapper);
+
+        // 构造器实现(新方式)
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+
+        template.setConnectionFactory(connectionFactory);
+        // key采用String的序列化方式
+        template.setKeySerializer(new StringRedisSerializer());
+        // value序列化方式采用jackson
         template.setValueSerializer(jackson2JsonRedisSerializer);
-        // Hash的key采用String的序列化方式
-        template.setHashKeySerializer(stringRedisSerializer);
-        // Hash的value采用Jackson的序列化方式
+        // hash的key也采用String的序列化方式
+        template.setHashKeySerializer(new StringRedisSerializer());
+        // hash的value序列化方式采用jackson
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         template.afterPropertiesSet();
         return template;
     }
 
+    /**
+     * 处理时间类型
+     *
+     * @param objectMapper 生成树
+     */
+    private void registerLocalDateTime(ObjectMapper objectMapper) {
+        // 设置java.util.Date时间类的序列化以及反序列化的格式
+        objectMapper.setDateFormat(new SimpleDateFormat(STANDARD_PATTERN));
+
+        JavaTimeModule timeModule = new JavaTimeModule();
+        // LocalDateTime
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(STANDARD_PATTERN);
+        timeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
+        timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+        // LocalDate
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+        timeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
+        timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
+        // LocalTime
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_PATTERN);
+        timeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+        timeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        objectMapper.registerModule(timeModule);
+
+    }
 }

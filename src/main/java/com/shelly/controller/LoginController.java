@@ -6,7 +6,7 @@ import com.shelly.annotation.AccessLimit;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.req.LoginReq;
 import com.shelly.entity.vo.req.RegisterReq;
-import com.shelly.service.LoginService;
+import com.shelly.service.impl.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "登录模块")
+//checked
 public class LoginController {
 
 
@@ -42,7 +43,7 @@ public class LoginController {
     @SaCheckLogin
     @GetMapping("/logout")
     @Operation(summary = "用户退出")
-    public Result<?> logout() {
+    public Result<Void> logout() {
         StpUtil.logout();
         return Result.success();
     }

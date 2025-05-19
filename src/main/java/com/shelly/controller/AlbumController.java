@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "相册模块")
+//checked but file upload
 public class AlbumController {
     private final AlbumService albumService;
 

@@ -2,6 +2,7 @@ package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.OnlineUserQuery;
@@ -24,6 +25,7 @@ import java.util.List;
 @Tag(name = "用户模块")
 @RestController
 @RequiredArgsConstructor
+//checked
 public class UserController {
 
     private final UserService userService;
@@ -37,7 +39,7 @@ public class UserController {
     @GetMapping("/admin/user/getUserMenu")
     @Operation(summary = "获取用户菜单")
     public Result<List<RouterResp>> getUserMenu() {
-        return Result.success(userService.getUserMenu());
+        return Result.success(userService.getUserMenu(StpUtil.getLoginIdAsInt()));
     }
 
 

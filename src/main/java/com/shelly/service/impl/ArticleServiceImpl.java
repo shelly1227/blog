@@ -1,17 +1,13 @@
 package com.shelly.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shelly.constants.CommonConstant;
-import com.shelly.constants.RedisConstant;
 
-import com.shelly.entity.dto.CanalDTO;
 import com.shelly.entity.pojo.*;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.ArticleQuery;
@@ -23,16 +19,17 @@ import com.shelly.entity.vo.req.TopReq;
 import com.shelly.entity.vo.res.*;
 import com.shelly.enums.ArticleStatusEnum;
 import com.shelly.enums.FilePathEnum;
+import com.shelly.enums.RedisConstants;
 import com.shelly.mapper.ArticleTagMapper;
 import com.shelly.mapper.CategoryMapper;
 import com.shelly.mapper.TagMapper;
 import com.shelly.service.ArticleService;
 import com.shelly.mapper.ArticleMapper;
-import com.shelly.service.RedisService;
+import com.shelly.service.SiteConfigService;
 import com.shelly.strategy.context.SearchStrategyContext;
 import com.shelly.strategy.context.UploadStrategyContext;
+import com.shelly.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +38,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.shelly.constants.ElasticConstant.DELETE;
-import static com.shelly.constants.ElasticConstant.INSERT;
-import static com.shelly.constants.MqConstant.ARTICLE_EXCHANGE;
-import static com.shelly.constants.MqConstant.ARTICLE_KEY;
 
 /**
 * @author Shelly6
@@ -56,7 +49,7 @@ import static com.shelly.constants.MqConstant.ARTICLE_KEY;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     implements ArticleService{
     private final ArticleMapper articleMapper;
-    private final RedisService redisService;
+    private final RedisUtil redisUtil;
     private final CategoryMapper categoryMapper;
     private final ArticleTagMapper articleTagMapper;
     private final TagMapper tagMapper;
@@ -64,7 +57,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     private final UploadStrategyContext uploadStrategyContext;
     private final BlogFileServiceImpl blogFileService;
     private final SearchStrategyContext searchStrategyContext;
-    private final RabbitTemplate rabbitTemplate;
+    private final SiteConfigService siteConfigService;
 
     @Override
     public PageResult<ArticleBackResp> listArticleBackVO(ArticleQuery articleQuery) {
@@ -75,17 +68,37 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         }
         // 查询文章后台信息
         List<ArticleBackResp> articleBackRespList = articleMapper.selectBackArticleList(articleQuery);
+        if (CollectionUtils.isEmpty(articleBackRespList)) {
+            return new PageResult<>();
+        }
         // 浏览量
-        Map<Object, Double> viewCountMap = redisService.getZsetAllScore(RedisConstant.ARTICLE_VIEW_COUNT);
+        Map<String, Double> viewCountMap = redisUtil.getAllZSetScores(RedisConstants.ARTICLE_VIEW_COUNT.getKey());
         // 点赞量
-        Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstant.ARTICLE_LIKE_COUNT);
-        // 封装文章后台信息
-        articleBackRespList.forEach(item -> {
-            Double viewCount = Optional.ofNullable(viewCountMap.get(item.getId())).orElse((double) 0);
+        Map<Object, Object> likeCountMap = redisUtil.getHashEntries(RedisConstants.ARTICLE_LIKE_COUNT.getKey());
+        // 封装浏览量与点赞量
+        for (ArticleBackResp item : articleBackRespList) {
+            String articleIdStr = item.getId().toString();
+
+            // 浏览量（默认0）
+            Double viewCount = viewCountMap.getOrDefault(articleIdStr, 0.0);
             item.setViewCount(viewCount.intValue());
-            Integer likeCount = likeCountMap.get(item.getId().toString());
-            item.setLikeCount(Optional.ofNullable(likeCount).orElse(0));
-        });
+
+            Object like = likeCountMap.get(articleIdStr);
+            int likeCount = 0;
+
+            if (like instanceof Integer likeInt) {
+                likeCount = likeInt;
+            } else if (like instanceof String likeStr) {
+                try {
+                    likeCount = Integer.parseInt(likeStr);
+                } catch (NumberFormatException e) {
+                    log.error("NumberFormatException:", e);
+                }
+            }
+            item.setLikeCount(likeCount);
+
+
+        }
         return new PageResult<>(articleBackRespList, count);
     }
 
@@ -97,7 +110,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         Article newArticle = new Article();
         BeanUtils.copyProperties(article, newArticle);
         if (StringUtils.isBlank(newArticle.getArticleCover())) {
-            SiteConfig siteConfig = redisService.getObject(RedisConstant.SITE_SETTING);
+            SiteConfig siteConfig = redisUtil.get(RedisConstants.SITE_SETTING.getKey(),  SiteConfig.class);
+            if(siteConfig == null || StringUtils.isBlank(siteConfig.getArticleCover())){
+                siteConfig = siteConfigService.lambdaQuery()
+                        .eq(SiteConfig::getId, 1)
+                        .one();
+                redisUtil.set(RedisConstants.SITE_SETTING.getKey(), siteConfig, RedisConstants.SITE_SETTING.getTtl(), RedisConstants.SITE_SETTING.getTimeUnit());
+            }
             newArticle.setArticleCover(siteConfig.getArticleCover());
         }
         newArticle.setCategoryId(categoryId);
@@ -105,18 +124,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         baseMapper.insert(newArticle);
         // 保存文章标签
         saveArticleTag(article, newArticle.getId());
-        // 构建 CanalDTO 对象
-        CanalDTO canalDTO = new CanalDTO();
-        canalDTO.setIsDdl(false);
-        canalDTO.setType(INSERT);
-        // 将 article 对象转换为 Map 并添加到 data 列表中
-        Map<String, Object> articleMap = BeanUtil.beanToMap(article);
-        canalDTO.setData(Collections.singletonList(articleMap));
-
-        // 将 CanalDTO 转换为 JSON 字符串并发送消息
-        String message = JSONUtil.toJsonStr(canalDTO);
-        rabbitTemplate.convertAndSend(ARTICLE_EXCHANGE, ARTICLE_KEY, message);
-        //
+//        // 构建 CanalDTO 对象
+//        CanalDTO canalDTO = new CanalDTO();
+//        canalDTO.setIsDdl(false);
+//        canalDTO.setType(INSERT);
+//        // 将 article 对象转换为 Map 并添加到 data 列表中
+//        Map<String, Object> articleMap = BeanUtil.beanToMap(article);
+//        canalDTO.setData(Collections.singletonList(articleMap));
+//
+//        // 将 CanalDTO 转换为 JSON 字符串并发送消息
+//        String message = JSONUtil.toJsonStr(canalDTO);
+//        rabbitTemplate.convertAndSend(ARTICLE_EXCHANGE, ARTICLE_KEY, message);
+//        //
     }
 
     @Override
@@ -126,22 +145,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         articleTagMapper.delete(new LambdaQueryWrapper<ArticleTag>()
                 .in(ArticleTag::getArticleId, articleIdList));
         // 删除文章
-        articleMapper.deleteBatchIds(articleIdList);
-        // 构建 CanalDTO 对象
-        CanalDTO canalDTO = new CanalDTO();
-        canalDTO.setIsDdl(false);
-        canalDTO.setType(DELETE);
-        // 将 article 对象转换为 Map 并添加到 data 列表中
-        Map<String, Object> articleMap = BeanUtil.beanToMap(articleIdList);
-        canalDTO.setData(Collections.singletonList(articleMap));
-
-        // 将 CanalDTO 转换为 JSON 字符串并发送消息
-        String message = JSONUtil.toJsonStr(canalDTO);
-        rabbitTemplate.convertAndSend(ARTICLE_EXCHANGE, ARTICLE_KEY, message);
+        articleMapper.deleteByIds(articleIdList);
+//        // 构建 CanalDTO 对象
+//        CanalDTO canalDTO = new CanalDTO();
+//        canalDTO.setIsDdl(false);
+//        canalDTO.setType(DELETE);
+//        // 将 article 对象转换为 Map 并添加到 data 列表中
+//        Map<String, Object> articleMap = BeanUtil.beanToMap(articleIdList);
+//        canalDTO.setData(Collections.singletonList(articleMap));
+//
+//        // 将 CanalDTO 转换为 JSON 字符串并发送消息
+//        String message = JSONUtil.toJsonStr(canalDTO);
+//        rabbitTemplate.convertAndSend(ARTICLE_EXCHANGE, ARTICLE_KEY, message);
     }
 
     @Override
-    @Transactional
     public void updateArticleDelete(DeleteReq delete) {
         // 批量更新文章删除状态
         List<Article> articleList = delete.getIdList()
@@ -152,7 +170,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
                         .isTop(CommonConstant.FALSE)
                         .isRecommend(CommonConstant.FALSE)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         this.updateBatchById(articleList);
     }
 
@@ -242,7 +260,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             return null;
         }
         // 浏览量+1
-        redisService.incrZet(RedisConstant.ARTICLE_VIEW_COUNT, articleId, 1D);
+        redisUtil.incrZet(RedisConstants.ARTICLE_VIEW_COUNT.getKey(), articleId, 1D);
         // 查询上一篇文章
         ArticlePaginationResp lastArticle = articleMapper.selectLastArticle(articleId);
         // 查询下一篇文章
@@ -250,11 +268,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         article.setLastArticle(lastArticle);
         article.setNextArticle(nextArticle);
         // 查询浏览量
-        Double viewCount = Optional.ofNullable(redisService.getZsetScore(RedisConstant.ARTICLE_VIEW_COUNT, articleId))
+        Double viewCount = Optional.ofNullable(redisUtil.getScoreFromZSet(RedisConstants.ARTICLE_VIEW_COUNT.getKey(), String.valueOf(articleId)))
                 .orElse((double) 0);
         article.setViewCount(viewCount.intValue());
         // 查询点赞量
-        Integer likeCount = redisService.getHash(RedisConstant.ARTICLE_LIKE_COUNT, articleId.toString());
+        Integer likeCount = redisUtil.getMapInt(RedisConstants.ARTICLE_LIKE_COUNT.getKey(), articleId.toString());
         article.setLikeCount(Optional.ofNullable(likeCount).orElse(0));
         return article;
     }
@@ -305,13 +323,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
                     .map(item -> Tag.builder()
                             .tagName(item)
                             .build())
-                    .collect(Collectors.toList());
+                    .toList();
             // 批量保存新标签
             tagService.saveBatch(newTagList);
             // 获取新标签id列表
             List<Integer> newTagIdList = newTagList.stream()
                     .map(Tag::getId)
-                    .collect(Collectors.toList());
+                    .toList();
             // 新标签id添加到id列表
             existTagIdList.addAll(newTagIdList);
         }

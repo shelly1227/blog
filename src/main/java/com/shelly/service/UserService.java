@@ -31,7 +31,7 @@ public interface UserService extends IService<User> {
 
     UserBackInfoResp getUserBackInfo();
 
-    List<RouterResp> getUserMenu();
+    List<RouterResp> getUserMenu(int userId);
 
     void updateAdminPassword(PasswordReq password);
 
