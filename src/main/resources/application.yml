@@ -65,19 +65,19 @@ spring:
           max-idle: 100
           # 连接池中的最小空闲连接
           min-idle: 50
-  rabbitmq:
-    host: <RABBITMQ_HOST>
-    port: 5672
-    username: <RABBITMQ_USERNAME>
-    password: <RABBITMQ_PASSWORD>
-    listener:
-      simple:
-        retry:
-          enabled: true
-          # 重试间隔时间
-          initial-interval: 3000
-          # 最大重试次数
-          max-attempts: 3
+#  rabbitmq:
+#    host: <RABBITMQ_HOST>
+#    port: 5672
+#    username: <RABBITMQ_USERNAME>
+#    password: <RABBITMQ_PASSWORD>
+#    listener:
+#      simple:
+#        retry:
+#          enabled: true
+#          # 重试间隔时间
+#          initial-interval: 3000
+#          # 最大重试次数
+#          max-attempts: 3
   # 邮箱配置
   mail:
     host: smtp.example.com
@@ -136,16 +136,16 @@ mybatis-plus:
     db-config:
       # 数据库表前缀
       table-prefix: t_
-## elasticsearch配置
-elasticsearch:
-  username: <ES_USERNAME>
-  password: <ES_PASSWORD>
-  hostname: <ES_HOST>
-  port: 9200
-  scheme: http
-  connTimeout: 1000
-  socketTimeout: 30000
-  connectionRequestTimeout: 5000
+### elasticsearch配置
+#elasticsearch:
+#  username: <ES_USERNAME>
+#  password: <ES_PASSWORD>
+#  hostname: <ES_HOST>
+#  port: 9200
+#  scheme: http
+#  connTimeout: 1000
+#  socketTimeout: 30000
+#  connectionRequestTimeout: 5000
 # Sa-Token 配置 (文档: https://sa-token.cc)
 sa-token:
   # token名称 (同时也是cookie名称)
@@ -197,5 +197,3 @@ sa-token:
 #    access-token-url: https://graph.qq.com/oauth2.0/token
 #    user-openid-url: https://graph.qq.com/oauth2.0/me
 #    user-info-url: https://graph.qq.com/user/get_user_info
-  #B站图片上传链接
-bili-url: https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs
