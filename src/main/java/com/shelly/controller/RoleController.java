@@ -2,6 +2,7 @@ package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.RoleQuery;
@@ -16,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.shelly.constants.OptTypeConstant.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +43,7 @@ public class RoleController {
     @SaCheckPermission("system:role:add")
     @PostMapping("/admin/role/add")
     @Operation(summary = "添加角色")
+    @OptLogger(value = ADD)
     public Result<?> addRole(@Validated @RequestBody RoleReq role) {
         roleService.addRole(role);
         return Result.success();
@@ -47,6 +51,7 @@ public class RoleController {
 
 
     @SaCheckPermission("system:role:delete")
+    @OptLogger(value = DELETE)
     @Operation(summary = "删除角色")
     @DeleteMapping("/admin/role/delete")
     public Result<?> deleteRole(@RequestBody List<String> roleIdList) {
@@ -57,6 +62,7 @@ public class RoleController {
 
     @SaCheckPermission("system:role:update")
     @PutMapping("/admin/role/update")
+    @OptLogger(value = UPDATE)
     @Operation(summary = "修改角色")
     public Result<?> updateRole(@Validated @RequestBody RoleReq role) {
         roleService.updateRole(role);
@@ -67,6 +73,7 @@ public class RoleController {
     @SaCheckPermission(value = {"system:role:update", "system:role:status"}, mode = SaMode.OR)
     @PutMapping("/admin/role/changeStatus")
     @Operation(summary = "修改角色状态")
+    @OptLogger(value = UPDATE)
     public Result<?> updateRoleStatus(@Validated @RequestBody RoleStatusReq roleStatus) {
         roleService.updateRoleStatus(roleStatus);
         return Result.success();

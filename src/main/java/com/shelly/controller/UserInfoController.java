@@ -41,7 +41,6 @@ public class UserInfoController {
     @GetMapping("/user/getUserInfo")
     @SaCheckLogin
     @Operation(summary = "获取用户信息")
-    //TODO
     public Result<UserInfoResp> getUserInfo() {
         return Result.success(userService.getUserInfo());
     }

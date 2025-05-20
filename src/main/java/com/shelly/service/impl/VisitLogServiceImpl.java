@@ -35,6 +35,11 @@ private final VisitLogMapper visitLogMapper;
         List<VisitLog>list = visitLogMapper.selectVisitLogRespList(logQuery);
         return new PageResult<>(list,count);
     }
+
+    @Override
+    public void saveVisitLog(VisitLog visitLog) {
+        this.save(visitLog);
+    }
 }
 
 

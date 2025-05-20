@@ -1,11 +1,15 @@
 package com.shelly.config;
 
 import com.shelly.config.properties.ThreadPoolProperties;
+import com.shelly.utils.ThreadUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
@@ -38,18 +42,17 @@ public class ThreadPoolConfig {
     /**
      * 执行周期性或定时任务
      */
-    //  TODO
-//    @Bean(name = "scheduledExecutorService")
-//    protected ScheduledExecutorService scheduledExecutorService() {
-//        return new ScheduledThreadPoolExecutor(threadPoolProperties.getCorePoolSize(),
-//                new BasicThreadFactory.Builder().namingPattern("schedule-pool-%d").daemon(true).build(),
-//                new ThreadPoolExecutor.CallerRunsPolicy()) {
-//            @Override
-//            protected void afterExecute(Runnable r, Throwable t) {
-//                super.afterExecute(r, t);
-//                ThreadUtils.printException(r, t);
-//            }
-//        };
-//    }
+    @Bean(name = "scheduledExecutorService")
+    protected ScheduledExecutorService scheduledExecutorService() {
+        return new ScheduledThreadPoolExecutor(threadPoolProperties.getCorePoolSize(),
+                new BasicThreadFactory.Builder().namingPattern("schedule-pool-%d").daemon(true).build(),
+                new ThreadPoolExecutor.CallerRunsPolicy()) {
+            @Override
+            protected void afterExecute(Runnable r, Throwable t) {
+                super.afterExecute(r, t);
+                ThreadUtils.printException(r, t);
+            }
+        };
+    }
 
 }

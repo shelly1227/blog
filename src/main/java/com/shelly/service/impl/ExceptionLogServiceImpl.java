@@ -40,6 +40,11 @@ public class ExceptionLogServiceImpl extends ServiceImpl<ExceptionLogMapper, Exc
         List<ExceptionLog> operationLogVOList = exceptionLogMapper.selectExceptionLogList(logQuery);
         return new PageResult<>(operationLogVOList, count);
     }
+
+    @Override
+    public void saveExceptionLog(ExceptionLog exceptionLog) {
+        exceptionLogMapper.insert(exceptionLog);
+    }
 }
 
 

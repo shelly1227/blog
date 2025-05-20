@@ -17,7 +17,7 @@ import org.thymeleaf.context.Context;
 @Slf4j
 @RequiredArgsConstructor
 public class EmailService {
-    @Value("${spring.mail.username}")
+    @Value("${mail.username}")
     private String email;
     private final JavaMailSender javaMailSender;
     private final org.thymeleaf.TemplateEngine templateEngine;

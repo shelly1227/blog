@@ -1,6 +1,8 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.shelly.annotation.OptLogger;
+import com.shelly.annotation.VisitLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.res.TagBackResp;
 import com.shelly.entity.vo.res.TagOptionResp;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.shelly.constants.OptTypeConstant.*;
+
 @RestController
 @Tag(name = "标签模块")
 @RequiredArgsConstructor
@@ -28,6 +32,7 @@ public class TagController {
     @PostMapping("/admin/tag/add")
     @Operation(summary = "添加标签")
     @SaCheckPermission("blog:tag:add")
+    @OptLogger(value = ADD)
     public Result<?> addTag(@Valid @RequestBody TagReq tag) {
         tagService.addTag(tag);
         return Result.success();
@@ -35,6 +40,7 @@ public class TagController {
     @DeleteMapping("/admin/tag/delete")
     @SaCheckPermission("blog:tag:delete")
     @Operation(summary = "删除标签")
+    @OptLogger(value = DELETE)
     public Result<?> deleteTag(@RequestBody List<Integer> tagIdList) {
         tagService.deleteTag(tagIdList);
         return Result.success();
@@ -52,6 +58,7 @@ public class TagController {
     }
     @PutMapping("/admin/tag/update")
     @SaCheckPermission("blog:tag:update")
+    @OptLogger(value = UPDATE)
     @Operation(summary = "修改标签")
     public Result<?> updateTag(@Valid @RequestBody TagReq tag) {
         tagService.updateTag(tag);
@@ -59,10 +66,12 @@ public class TagController {
     }
     @GetMapping("/tag/article")
     @Operation(summary = "获取标签下的文章")
+    @VisitLogger(value = "标签文章")
     public Result<ArticleConditionList> listTagByArticle(ArticleConditionQuery articleConditionQuery) {
         return Result.success(tagService.listTagByArticle(articleConditionQuery));
     }
     @GetMapping("/tag/list")
+    @VisitLogger(value = "文章标签")
     @Operation(summary = "获取标签列表")
     public Result<List<TagResp>> getTag() {
         return Result.success(tagService.getTag());

@@ -3,6 +3,7 @@ package com.shelly.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.annotation.AccessLimit;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.CommentQuery;
@@ -22,6 +23,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.shelly.constants.OptTypeConstant.DELETE;
+import static com.shelly.constants.OptTypeConstant.UPDATE;
 
 @RequiredArgsConstructor
 @RestController
@@ -55,6 +59,7 @@ public class CommentController {
     @SaCheckPermission("news:comment:delete")
     @DeleteMapping("/admin/comment/delete")
     @Operation(summary = "删除评论")
+    @OptLogger(value = DELETE)
     public Result<?> deleteComment(@RequestBody List<Integer> commentIdList) {
         commentService.removeByIds(commentIdList);
         return Result.success();
@@ -63,6 +68,7 @@ public class CommentController {
 
     @SaCheckPermission("news:comment:pass")
     @Operation(summary = "审核评论")
+    @OptLogger(value = UPDATE)
     @PutMapping("/admin/comment/pass")
     public Result<?> updateCommentCheck(@Validated @RequestBody CheckReq check) {
         commentService.updateCommentCheck(check);

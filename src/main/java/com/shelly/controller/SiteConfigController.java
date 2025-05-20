@@ -1,6 +1,7 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 
 import com.shelly.entity.pojo.SiteConfig;
@@ -14,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.shelly.constants.OptTypeConstant.UPDATE;
+import static com.shelly.constants.OptTypeConstant.UPLOAD;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "站点配置模块")
-//checked
+//checked but upload
 public class SiteConfigController {
 
     private final SiteConfigService siteConfigService;
@@ -45,6 +49,7 @@ public class SiteConfigController {
     @SaCheckPermission("web:site:update")
     @PutMapping("/admin/site/update")
     @Operation(summary = "更新网站配置")
+    @OptLogger(value = UPDATE)
     public Result<?> updateSiteConfig(@RequestBody SiteConfig siteConfig) {
         siteConfigService.updateSiteConfig(siteConfig);
         return Result.success();
@@ -60,6 +65,7 @@ public class SiteConfigController {
     @ApiImplicitParam(name = "file", value = "配置图片", required = true, dataType = "MultipartFile")
     @SaCheckPermission("web:site:upload")
     @Operation(summary = "上传网站配置图片")
+    @OptLogger(value = UPLOAD)
     @PostMapping("/admin/site/upload")
     public Result<String> uploadSiteImg(@RequestParam("file") MultipartFile file) {
         return Result.success(siteConfigService.uploadSiteImg(file));

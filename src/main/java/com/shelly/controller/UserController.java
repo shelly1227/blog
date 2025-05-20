@@ -3,6 +3,7 @@ package com.shelly.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.OnlineUserQuery;
@@ -21,6 +22,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.shelly.constants.OptTypeConstant.KICK;
+import static com.shelly.constants.OptTypeConstant.UPDATE;
 
 @Tag(name = "用户模块")
 @RestController
@@ -69,6 +73,7 @@ public class UserController {
      * @return {@link Result<>}
      */
     @Operation(summary = "修改用户")
+    @OptLogger(value = UPDATE)
     @SaCheckPermission("system:user:update")
     @PutMapping("/admin/user/update")
     public Result<?> updateUser(@Validated @RequestBody UserRoleReq user) {
@@ -79,6 +84,7 @@ public class UserController {
 
     @SaCheckPermission("system:user:status")
     @PutMapping("/admin/user/changeStatus")
+    @OptLogger(value = UPDATE)
     @Operation(summary = "修改用户状态")
     public Result<?> updateUserStatus(@Validated @RequestBody DisableReq disable) {
         userService.updateUserStatus(disable);
@@ -106,6 +112,7 @@ public class UserController {
      */
     @SaCheckPermission("monitor:online:kick")
     @GetMapping("/admin/online/kick/{token}")
+    @OptLogger(value = KICK)
     @Operation(summary = "下线用户")
     public Result<?> kickOutUser(@PathVariable("token") String token) {
         userService.kickOutUser(token);

@@ -1,6 +1,7 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.res.FileResp;
 import com.shelly.entity.vo.req.FolderReq;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.shelly.constants.OptTypeConstant.*;
+
 /**
  * 博客管理
  * @author shelly
@@ -30,12 +33,14 @@ public class BlogFileController {
     @PostMapping("/admin/file/createFolder")
     @SaCheckPermission("system:file:createFolder")
     @Operation(summary = "创建文件夹")
+    @OptLogger(value = ADD)
     public Result<?> createFolder(@Valid @RequestBody FolderReq folder) {
         blogFileService.createFolder(folder);
         return Result.success();
     }
     @DeleteMapping("/admin/file/delete")
     @SaCheckPermission("system:file:delete")
+    @OptLogger(value = DELETE)
     @Operation(summary = "删除文件")
     public Result<?> delete(@RequestBody List<Integer> fileIdList) {
         blogFileService.delete(fileIdList);
@@ -49,6 +54,7 @@ public class BlogFileController {
     }
     @PostMapping("/admin/file/upload")
     @SaCheckPermission("system:file:upload")
+    @OptLogger(value = UPLOAD)
     @Operation(summary = "上传文件")
     public Result<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         blogFileService.uploadFile(file, path);

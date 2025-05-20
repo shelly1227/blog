@@ -1,5 +1,7 @@
 package com.shelly.entity.vo.res;
 
+import com.shelly.annotation.Desensitization;
+import com.shelly.enums.DesensitizationTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-//TODO
 @ApiModel(description = "用户后台Response")
 public class UserBackResp {
 
@@ -33,14 +34,14 @@ public class UserBackResp {
     /**
      * 登录ip
      */
-   // @Desensitization(type = DesensitizationTypeEnum.IP4)
+    @Desensitization(type = DesensitizationTypeEnum.IP4)
     @ApiModelProperty(value = "登录ip")
     private String ipAddress;
 
     /**
      * 登录地址
      */
-   // @Desensitization(type = DesensitizationTypeEnum.ADDRESS)
+    @Desensitization(type = DesensitizationTypeEnum.ADDRESS)
     @ApiModelProperty(value = "登录地址")
     private String ipSource;
 

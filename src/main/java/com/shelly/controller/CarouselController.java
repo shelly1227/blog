@@ -1,7 +1,9 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
+import com.shelly.constants.OptTypeConstant;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.CarouselQuery;
 import com.shelly.entity.vo.req.CarouselReqVo;
@@ -25,7 +27,6 @@ import java.util.List;
 //checked but file upload
 public class CarouselController {
 
-
     private final CarouselService carouselService;
 
 
@@ -46,6 +47,7 @@ public class CarouselController {
     @ApiImplicitParam(name = "file", value = "轮播图片", required = true, dataType = "MultipartFile")
     @SaCheckPermission("web:carousel:upload")
     @PostMapping("/admin/carousel/upload")
+    @OptLogger(value = OptTypeConstant.UPLOAD)
     @Operation(summary = "上传轮播图")
     public Result<String> uploadCarousel(@RequestParam("file") MultipartFile file) {
         return Result.success(carouselService.uploadCarousel(file));
@@ -54,6 +56,7 @@ public class CarouselController {
 
     @SaCheckPermission("web:carousel:add")
     @Operation(summary = "添加轮播图")
+    @OptLogger(value = OptTypeConstant.ADD)
     @PostMapping("/admin/carousel/add")
     public Result<?> addCarousel(@Validated @RequestBody CarouselReqVo carouselReqVo) {
         carouselService.addCarousel(carouselReqVo);
@@ -64,6 +67,7 @@ public class CarouselController {
 
     @SaCheckPermission("web:carousel:update")
     @Operation(summary = "修改轮播图")
+    @OptLogger(value = OptTypeConstant.UPDATE)
     @PostMapping("/admin/carousel/update")
     public Result<?> updateCarousel(@Validated @RequestBody CarouselReqVo carouselReqVo) {
         carouselService.updateCarousel(carouselReqVo);
@@ -72,6 +76,7 @@ public class CarouselController {
 
 
     @SaCheckPermission("web:carousel:delete")
+    @OptLogger(value = OptTypeConstant.DELETE)
     @Operation(summary = "删除轮播图")
     @DeleteMapping("/admin/carousel/delete")
     public Result<?> deleteCarousel(@RequestBody List<Integer> carouselIdList) {
@@ -81,6 +86,7 @@ public class CarouselController {
 
 
     @SaCheckPermission("web:carousel:status")
+    @OptLogger(value = OptTypeConstant.UPDATE)
     @Operation(summary = "修改轮播图状态")
     @PutMapping("/admin/carousel/status")
     public Result<?> updateCarouselStatus(@Validated @RequestBody CarouselStatusReq carouselStatusReq) {

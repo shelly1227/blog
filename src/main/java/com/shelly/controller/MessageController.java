@@ -2,6 +2,8 @@ package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.annotation.AccessLimit;
+import com.shelly.annotation.OptLogger;
+import com.shelly.annotation.VisitLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.MessageQuery;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.shelly.constants.OptTypeConstant.DELETE;
+import static com.shelly.constants.OptTypeConstant.UPDATE;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "留言模块")
@@ -28,6 +33,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @Operation(summary = "查看留言列表")
+    @VisitLogger(value = "留言")
     @GetMapping("/message/list")
     public Result<List<MessageResp>> listMessageVO() {
         return Result.success(messageService.listMessageVO());
@@ -52,6 +58,7 @@ public class MessageController {
 
     @SaCheckPermission("news:message:delete")
     @Operation(summary = "删除留言")
+    @OptLogger(value = DELETE)
     @DeleteMapping("/admin/message/delete")
     public Result<?> deleteMessage(@RequestBody List<Integer> messageIdList) {
         messageService.removeByIds(messageIdList);
@@ -60,6 +67,7 @@ public class MessageController {
 
 
     @SaCheckPermission("news:message:pass")
+    @OptLogger(value = UPDATE)
     @Operation(summary = "审核留言")
     @PutMapping("/admin/message/pass")
     public Result<?> updateMessageCheck(@Validated @RequestBody CheckReq check) {

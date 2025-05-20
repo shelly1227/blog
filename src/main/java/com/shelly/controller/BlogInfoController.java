@@ -1,5 +1,6 @@
 package com.shelly.controller;
 
+import com.shelly.annotation.VisitLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.res.BlogBackInfoResp;
 import com.shelly.entity.vo.res.BlogInfoResp;
@@ -52,6 +53,7 @@ public class BlogInfoController {
 
     @Operation(summary = "查看关于我信息")
     @GetMapping("/about")
+    @VisitLogger(value = "关于")
     public Result<String> getAbout() {
         return Result.success(blogInfoService.getAbout());
     }

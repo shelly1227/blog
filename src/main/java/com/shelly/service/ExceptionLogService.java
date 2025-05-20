@@ -13,4 +13,6 @@ import com.shelly.entity.vo.query.LogQuery;
 public interface ExceptionLogService extends IService<ExceptionLog> {
 
     PageResult<ExceptionLog> listExceptionLogs(LogQuery logQuery);
+
+    void saveExceptionLog(ExceptionLog exceptionLog);
 }

@@ -14,4 +14,6 @@ import com.shelly.entity.vo.query.LogQuery;
 public interface VisitLogService extends IService<VisitLog> {
 
     PageResult<VisitLog> listVisitLogIds(LogQuery logQuery);
+
+    void saveVisitLog(VisitLog visitLog);
 }

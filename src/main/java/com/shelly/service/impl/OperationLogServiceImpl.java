@@ -41,6 +41,12 @@ public class OperationLogServiceImpl extends ServiceImpl<OperationLogMapper, Ope
         List<OperationLogResp> operationLogRespList = operationLogMapper.selectOperationLogVOList(logQuery);
         return new PageResult<>(operationLogRespList, count);
     }
+
+    @Override
+    public void saveOperationLog(OperationLog operationLog) {
+        // 保存操作日志
+        operationLogMapper.insert(operationLog);
+    }
 }
 
 

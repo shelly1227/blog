@@ -3,6 +3,8 @@ package com.shelly.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.shelly.annotation.AccessLimit;
+import com.shelly.annotation.OptLogger;
+import com.shelly.annotation.VisitLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.PageResult;
 import com.shelly.entity.vo.query.PageQuery;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.shelly.constants.OptTypeConstant.*;
 
 
 /**
@@ -53,11 +57,13 @@ public class TalkController {
     @SaCheckPermission("web:talk:upload")
     @PostMapping("/admin/talk/upload")
     @Operation(summary = "上传说说封面")
+    @OptLogger(value = UPLOAD)
     public Result<String> uploadTalkCover(@RequestParam("file") MultipartFile file) {
         return Result.success(talkService.uploadTalkCover(file));
     }
 
     @SaCheckPermission("web:talk:add")
+    @OptLogger(value = ADD)
     @Operation(summary = "添加说说")
     @PostMapping("/admin/talk/add")
     public Result<?> addTalk(@Validated @RequestBody TalkReq talk) {
@@ -66,10 +72,10 @@ public class TalkController {
     }
 
 
-
     @SaCheckPermission("web:talk:delete")
     @DeleteMapping("/admin/talk/delete/{talkId}")
     @Operation(summary = "删除说说")
+    @OptLogger(value = DELETE)
     public Result<?> deleteTalk(@PathVariable("talkId") Integer talkId) {
         talkService.delete(talkId);
         return Result.success();
@@ -80,6 +86,7 @@ public class TalkController {
     @SaCheckPermission("web:talk:update")
     @PutMapping("/admin/talk/update")
     @Operation(summary = "修改说说")
+    @OptLogger(value = UPDATE)
     public Result<?> updateTalk(@Validated @RequestBody TalkReq talk) {
         talkService.updateTalk(talk);
         return Result.success();
@@ -110,17 +117,15 @@ public class TalkController {
         return Result.success(talkService.listTalkHome());
     }
 
-
-
     @GetMapping("/talk/list")
+    @VisitLogger(value = "说说列表")
     @Operation(summary = "获取说说列表")
     public Result<PageResult<TalkResp>> listTalkVO(@Validated PageQuery pageQuery) {
         return Result.success(talkService.listTalkVO(pageQuery));
     }
 
-
-
     @GetMapping("/talk/{talkId}")
+    @VisitLogger(value = "说说")
     @Operation(summary = "获取说说详情")
     public Result<TalkResp> getTalkById(@PathVariable("talkId") Integer talkId) {
         return Result.success(talkService.getTalkById(talkId));

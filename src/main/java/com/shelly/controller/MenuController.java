@@ -1,6 +1,7 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.query.MenuQuery;
 import com.shelly.entity.vo.req.MenuReq;
@@ -16,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.shelly.constants.OptTypeConstant.ADD;
+import static com.shelly.constants.OptTypeConstant.DELETE;
+import static com.shelly.constants.OptTypeConstant.UPDATE;
+
 /**
  * 菜单控制器
  * @author shelly
@@ -30,6 +35,7 @@ public class MenuController {
     @SaCheckPermission("system:menu:add")
     @PostMapping("/admin/menu/add")
     @Operation(summary = "添加菜单")
+    @OptLogger(value = ADD)
     public Result<?> addMenu(@Validated @RequestBody MenuReq menu) {
         menuService.addMenu(menu);
         return Result.success();
@@ -38,6 +44,7 @@ public class MenuController {
     @SaCheckPermission("system:menu:delete")
     @DeleteMapping("/admin/menu/delete/{menuId}")
     @Operation(summary = "删除菜单")
+    @OptLogger(value = DELETE)
     public Result<?> deleteMenu(@PathVariable("menuId") Integer menuId) {
         menuService.deleteMenu(menuId);
         return Result.success();
@@ -77,16 +84,9 @@ public class MenuController {
     @SaCheckPermission("system:menu:update")
     @PutMapping("/admin/menu/update")
     @Operation(summary = "修改菜单")
+    @OptLogger(value = UPDATE)
     public Result<?> updateMenu(@Validated @RequestBody MenuReq menu) {
         menuService.updateMenu(menu);
         return Result.success();
     }
-
-
-
-
-
-
-
-
 }
