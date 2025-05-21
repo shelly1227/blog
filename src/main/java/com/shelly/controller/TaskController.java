@@ -27,7 +27,6 @@ import static com.shelly.constants.OptTypeConstant.*;
  */
 @Tag(name = "定时任务模块")
 @RestController
-//checked
 public class TaskController {
 
     @Autowired

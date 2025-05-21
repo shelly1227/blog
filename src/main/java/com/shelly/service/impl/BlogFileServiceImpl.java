@@ -138,7 +138,7 @@ public class BlogFileServiceImpl extends ServiceImpl<BlogFileMapper, BlogFile>
                     BeanUtils.copyProperties(file, dto);
                     return dto;
                 })
-                .collect(Collectors.toList());
+                .toList();
         // 返回分页结果
         return new PageResult<>(friendBackDTOList, blogFileIPage.getTotal());
     }

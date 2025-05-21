@@ -30,7 +30,6 @@ import static com.shelly.constants.OptTypeConstant.UPDATE;
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "评论模块")
-//checked simply
 public class CommentController {
 
     private final CommentService commentService;

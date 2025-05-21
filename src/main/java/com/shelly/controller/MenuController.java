@@ -28,7 +28,6 @@ import static com.shelly.constants.OptTypeConstant.UPDATE;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "菜单模块")
-//checked
 public class MenuController {
     private final MenuService menuService;
 

@@ -32,7 +32,6 @@ import static com.shelly.constants.OptTypeConstant.*;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "分类模块")
-//checked
 public class CategoryController {
     private final CategoryService categoryService;
     /**

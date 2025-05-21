@@ -1,5 +1,7 @@
 package com.shelly.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 
@@ -11,6 +13,8 @@ import com.shelly.entity.vo.query.TaskQuery;
 import com.shelly.service.TaskLogService;
 import com.shelly.mapper.TaskLogMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,13 +38,34 @@ public class TaskLogServiceImpl extends ServiceImpl<TaskLogMapper, TaskLog>
     @Override
     public PageResult<TaskLogResp> listLogs(TaskQuery taskQuery) {
         // 查询定时任务日志数量
-        Long count = taskLogMapper.selectTaskLogCount(taskQuery);
+        Long count = lambdaQuery()
+                .like(StringUtils.isNotBlank(taskQuery.getKeyword()), TaskLog::getTaskName, taskQuery.getKeyword())
+                .eq(taskQuery.getStatus() != null, TaskLog::getStatus, taskQuery.getStatus())
+                .like(StringUtils.isNotBlank(taskQuery.getTaskGroup()), TaskLog::getTaskGroup, taskQuery.getTaskGroup())
+                .count();
         if (count == 0) {
             return new PageResult<>();
         }
         // 查询定时任务日志列表
-        List<TaskLogResp> taskLogRespList = taskLogMapper.selectTaskLogRespList(taskQuery);
+        LambdaQueryWrapper<TaskLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+                .like(StringUtils.isNotBlank(taskQuery.getKeyword()), TaskLog::getTaskName, taskQuery.getKeyword())
+                .like(StringUtils.isNotBlank(taskQuery.getTaskGroup()), TaskLog::getTaskGroup, taskQuery.getTaskGroup())
+                .eq(taskQuery.getStatus() != null, TaskLog::getStatus, taskQuery.getStatus())
+                .orderByDesc(TaskLog::getCreateTime);
+
+        Page<TaskLog> page = new Page<>(taskQuery.getCurrent(), taskQuery.getSize());
+        Page<TaskLog> taskLogPage = taskLogMapper.selectPage(page, wrapper);
+
+        List<TaskLogResp> taskLogRespList = taskLogPage.getRecords().stream()
+                .map(taskLog -> {
+                    TaskLogResp resp = new TaskLogResp();
+                    BeanUtils.copyProperties(taskLog, resp);
+                    return resp;
+                })
+                .toList();
         return new PageResult<>(taskLogRespList, count);
+
     }
 }
 

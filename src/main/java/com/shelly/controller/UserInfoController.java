@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "用户信息模块")
-//checked
 public class UserInfoController {
     private final UserService userService;
     @PostMapping("/user/avatar")

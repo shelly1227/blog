@@ -21,7 +21,6 @@ import static com.shelly.constants.OptTypeConstant.UPLOAD;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "站点配置模块")
-//checked but upload
 public class SiteConfigController {
 
     private final SiteConfigService siteConfigService;

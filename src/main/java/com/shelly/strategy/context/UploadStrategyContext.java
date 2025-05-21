@@ -25,7 +25,6 @@ public class UploadStrategyContext {
     private String uploadStrategy;
 
     @Autowired
-    //localUploadStrategyImpl new LocalUploadStrategyImpl();
     private Map<String, UploadStrategy> uploadStrategyMap;
 
 

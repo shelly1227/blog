@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "博客信息模块")
 @RestController
 @RequiredArgsConstructor
-//checked
 public class BlogInfoController {
     private final BlogInfoService blogInfoService;
 

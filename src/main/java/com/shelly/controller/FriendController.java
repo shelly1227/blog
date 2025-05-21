@@ -29,7 +29,6 @@ import static com.shelly.constants.OptTypeConstant.*;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "友链模块")
-//checked
 public class FriendController {
     private final  FriendService friendService;
     @PostMapping("/admin/friend/add")

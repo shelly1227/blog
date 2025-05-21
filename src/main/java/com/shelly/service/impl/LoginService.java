@@ -124,8 +124,9 @@ public class LoginService {
                 .build();
 //        // 验证码存入消息队列，利用消息队列异步发送
 //        rabbitTemplate.convertAndSend(MqConstant.EMAIL_EXCHANGE, MqConstant.EMAIL_SIMPLE_KEY, mailDTO);
+        emailService.sendSimpleMail(mailDTO);
         // 异步直接发送邮件
-        CompletableFuture.runAsync(() -> emailService.sendSimpleMail(mailDTO), threadPoolTaskExecutor);
+        //CompletableFuture.runAsync(() -> emailService.sendSimpleMail(mailDTO), threadPoolTaskExecutor);
         // 将生成的验证码存入Redis
         String redisKey = RedisConstants.VERIFICATION_CODE.getKey() + username;
         redisUtil.set(redisKey, code);

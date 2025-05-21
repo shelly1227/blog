@@ -13,6 +13,11 @@ public enum UploadModeEnum {
     LOCAL("local", "localUploadStrategyImpl"),
 
     /**
+     * minio
+     */
+    MINIO("minio", "minioUploadStrategyImpl"),
+
+    /**
      * oss
      */
     OSS("oss", "ossUploadStrategyImpl"),

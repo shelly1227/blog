@@ -29,7 +29,6 @@ import static com.shelly.constants.OptTypeConstant.UPDATE;
 @Tag(name = "用户模块")
 @RestController
 @RequiredArgsConstructor
-//checked
 public class UserController {
 
     private final UserService userService;

@@ -24,9 +24,9 @@ public abstract class AbstractUploadStrategyImpl implements UploadStrategy {
             // 重新生成文件名
             String fileName = md5 + "." + extName;
             // 判断文件是否已存在
-            if (!exists(path + fileName)) {
+            if (Boolean.FALSE.equals(exists(path + fileName))) {
                 // 不存在则继续上传
-                upload(path, fileName, file.getInputStream());
+                upload(path, fileName, file.getInputStream(), file.getSize());
             }
             // 返回文件访问路径
             return getFileAccessUrl(path + fileName);
@@ -52,7 +52,7 @@ public abstract class AbstractUploadStrategyImpl implements UploadStrategy {
      * @param inputStream 输入流
      * @throws IOException io异常
      */
-    public abstract void upload(String path, String fileName, InputStream inputStream) throws IOException;
+    public abstract void upload(String path, String fileName, InputStream inputStream, long size) throws IOException;
 
     /**
      * 获取文件访问url

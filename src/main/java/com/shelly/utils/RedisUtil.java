@@ -624,7 +624,11 @@ public class RedisUtil {
                         ZSetOperations.TypedTuple::getScore
                 ));
     }
-
+    public Map<Object, Double> getZSetAllScore(String key) {
+        return Objects.requireNonNull(redisTemplate.opsForZSet().rangeWithScores(key, 0, -1))
+                .stream()
+                .collect(Collectors.toMap(ZSetOperations.TypedTuple::getValue, ZSetOperations.TypedTuple::getScore));
+    }
     //- - - - - - - - - - - - - - - - - - - - -  hash类型 - - - - - - - - - - - - - - - - - - - -
 
     /**

@@ -27,7 +27,6 @@ import java.util.List;
 @RestController
 @Tag(name = "日志模块")
 @RequiredArgsConstructor
-//checked
 public class LogsController {
     private final ExceptionLogService exceptionLogService;
     private final OperationLogService operationLogService;

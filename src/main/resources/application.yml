@@ -102,6 +102,12 @@ upload:
   local:
     url: https://static.example.com/
     path: /usr/local/upload/
+# minio配置
+  minio:
+    url: <MINIO_HOST>
+    access-key: <MINIO_KEY_ID>
+    secret-key: <MINIO_KEY_SECRET>
+    bucket-name: <MINIO_BUCKET>
 #  # oss存储
 #  oss:
 #    url: https://your-bucket.oss-region.aliyuncs.com/

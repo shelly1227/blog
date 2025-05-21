@@ -31,7 +31,6 @@ import static com.shelly.constants.OptTypeConstant.*;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "文章模块")
-//checked but file upload
 public class ArticleController {
 
     private final ArticleService articleService;

@@ -72,7 +72,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             return new PageResult<>();
         }
         // 浏览量
-        Map<String, Double> viewCountMap = redisUtil.getAllZSetScores(RedisConstants.ARTICLE_VIEW_COUNT.getKey());
+        Map<Object, Double> viewCountMap = redisUtil.getZSetAllScore(RedisConstants.ARTICLE_VIEW_COUNT.getKey());
         // 点赞量
         Map<Object, Object> likeCountMap = redisUtil.getHashEntries(RedisConstants.ARTICLE_LIKE_COUNT.getKey());
         // 封装浏览量与点赞量
