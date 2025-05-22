@@ -51,8 +51,7 @@ public class LoginService {
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private final UserRoleMapper userRoleMapper;
     private final SiteConfigService siteConfigService;
-    private final HttpServletRequest request;
-    public String login(LoginReq login) {
+    public String login(LoginReq login, HttpServletRequest request) {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .select(User::getId)
                 .eq(User::getUsername, login.getUsername())
@@ -62,13 +61,15 @@ public class LoginService {
         log.info("用户登录开始");
         StpUtil.checkDisable(user.getId());
         StpUtil.login(user.getId());
-        redisUtil.set(RedisConstants.USER_TOKEN, String.valueOf(user.getId()), StpUtil.getTokenValue());
-        redisUtil.set(RedisConstants.USER, String.valueOf(user.getId()), JSON.toJSONString(user));
+        String token = StpUtil.getTokenValue();
+        redisUtil.hPut(RedisConstants.USER_TOKEN, String.valueOf(user.getId()), token);
         log.info("用户登录成功");
         String ipAddress = getClientIP(request);
+        String ipSource = IpUtils.getIpSource(ipAddress);
+        Map<String, String> userAgentMap = UserAgentUtils.parseOsAndBrowser(request.getHeader("User-Agent"));
         CompletableFuture.runAsync(() -> {
             try {
-                recordLoginInfo(user.getId(), StpUtil.getTokenValue(), ipAddress);
+                recordLoginInfo(user.getId(), token, ipAddress, userAgentMap, ipSource);
             } catch (Exception e) {
                 // 记录日志时出现异常，不影响主流程
                 log.error("登录日志记录失败: " + e.getMessage());
@@ -76,19 +77,16 @@ public class LoginService {
         }, threadPoolTaskExecutor);
         return StpUtil.getTokenValue();
     }
-    private void recordLoginInfo(int loginId, String tokenValue, String ipAddress) {
+    private void recordLoginInfo(int loginId, String tokenValue, String ipAddress, Map<String, String> userAgentMap, String ipSource) {
         log.info("监听触发......");
         // 查询用户昵称、头像
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .select(User::getAvatar, User::getNickname)
                 .eq(User::getId, loginId));
-        // 解析浏览器和系统
-        Map<String, String> userAgentMap = UserAgentUtils.parseOsAndBrowser(request.getHeader("User-Agent"));
-
-        // 获取登录 IP 和地址
-        String ipSource = IpUtils.getIpSource(ipAddress);
         // 登录时间
         LocalDateTime loginTime = LocalDateTime.now(ZoneId.of(SHANGHAI.getZone()));
+        String os = userAgentMap.get("os");
+        String browser = userAgentMap.get("browser");
         // 构建在线用户信息
         OnlineUserResp onlineUserResp = OnlineUserResp.builder()
                 .id(loginId)
@@ -97,8 +95,8 @@ public class LoginService {
                 .nickname(user.getNickname())
                 .ipAddress(ipAddress)
                 .ipSource(ipSource)
-                .os(userAgentMap.get("os"))
-                .browser(userAgentMap.get("browser"))
+                .os(os)
+                .browser(browser)
                 .loginTime(loginTime)
                 .build();
         // 更新用户登录信息
@@ -109,6 +107,7 @@ public class LoginService {
                 .loginTime(loginTime)
                 .build();
         userMapper.updateById(newUser);
+        log.info("信息记录成功");
         redisUtil.set(RedisConstants.USER_INFO, String.valueOf(loginId), onlineUserResp);
     }
 

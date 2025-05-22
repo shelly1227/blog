@@ -9,6 +9,7 @@ import com.shelly.entity.vo.req.RegisterReq;
 import com.shelly.service.impl.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +33,8 @@ public class LoginController {
      */
     @PostMapping("/login")
     @Operation(summary = "用户登录")
-    public Result<String> login(@Validated @RequestBody LoginReq login) {
-        return Result.success(loginService.login(login));
+    public Result<String> login(@Validated @RequestBody LoginReq login, HttpServletRequest request) {
+        return Result.success(loginService.login(login, request));
     }
 
     /**

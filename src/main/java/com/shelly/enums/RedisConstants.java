@@ -49,8 +49,8 @@ public enum RedisConstants {
 
     VERIFICATION_CODE("Verification:code:", 300L, TimeUnit.SECONDS),
 
-    USER_TOKEN("User:token:", 3L,TimeUnit.DAYS ),
-    USER_INFO("User:info:",3L ,TimeUnit.DAYS ),
+    USER_TOKEN("User:token:", 1L,TimeUnit.DAYS ),
+    USER_INFO("User:info:",1L ,TimeUnit.DAYS ),
     STOP_WORD_CONTENT("Word:stopWord:list:", -1L, TimeUnit.SECONDS),
     JOB_APPLICATION_COUNT("Job:application:count",600L , TimeUnit.SECONDS),
     USER_MENU("User:menu:", 1800L, TimeUnit.SECONDS),

@@ -640,7 +640,11 @@ public class RedisUtil {
     public void add(String key, Map<String, String> map) {
         redisTemplate.opsForHash().putAll(key, map);
     }
-
+    public void hPut(RedisConstants redisConstants, String s, String tokenValue) {
+        String key = redisConstants.getKey();
+        redisTemplate.opsForHash().put(key, s, tokenValue);
+        redisTemplate.expire(key, redisConstants.getTtl(), redisConstants.getTimeUnit());
+    }
     public void add(String key,String hashKey,Object value) {
         // 序列化 value
         if(!isPrimitiveOrWrapper(value.getClass())) {
@@ -651,6 +655,8 @@ public class RedisUtil {
     public Map getHashAll(String key) {
         return redisTemplate.opsForHash().entries(key);
     }
+
+
 
     /**
      * 获取 key 下的 所有  hashkey 和 value
@@ -923,5 +929,7 @@ public class RedisUtil {
     public void rightPop(String key, long timeout, TimeUnit unit) {
         redisTemplate.opsForList().rightPop(key, timeout, unit);
     }
+
+
 }
 

@@ -1,7 +1,5 @@
 package com.shelly.service.impl;
 
-import cn.dev33.satoken.session.SaSession;
-import cn.dev33.satoken.session.SaSessionCustomUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -83,11 +81,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         roleMapper.deleteByIds(roleIdList);
         // 批量删除角色关联的菜单权限
         roleMenuMapper.deleteRoleMenu(roleIdList);
-        // 删除Redis缓存中的菜单权限
-        roleIdList.forEach(roleId -> {
-            SaSession sessionById = SaSessionCustomUtil.getSessionById("role-" + roleId, false);
-            Optional.ofNullable(sessionById).ifPresent(saSession -> saSession.delete("Permission_List"));
-        });
     }
 
     @Override
@@ -125,9 +118,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         roleMenuMapper.deleteRoleMenuByRoleId(newRole.getId());
         // 再添加角色菜单权限
         roleMenuMapper.insertRoleMenu(newRole.getId(), role.getMenuIdList());
-        // 删除Redis缓存中的菜单权限
-        SaSession sessionById = SaSessionCustomUtil.getSessionById("role-" + newRole.getId(), false);
-        Optional.ofNullable(sessionById).ifPresent(saSession -> saSession.delete("Permission_List"));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
@@ -97,6 +98,7 @@ public class UserController {
      * @return {@link OnlineUserResp} 在线用户列表
      */
     @Operation(summary = "查看在线用户")
+    @SaIgnore
     @SaCheckPermission("monitor:online:list")
     @GetMapping("/admin/online/list")
     public Result<PageResult<OnlineUserResp>> listOnlineUser(OnlineUserQuery onlineUserQuery) {

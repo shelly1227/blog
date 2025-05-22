@@ -4,6 +4,7 @@ import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,6 +31,7 @@ import com.shelly.utils.SecurityUtils;
 import com.shelly.utils.cache.Cache;
 import com.shelly.utils.cache.CacheParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
 * @description 针对表【t_user】的数据库操作Service实现
 * @createDate 2024-07-22 20:24:46
 */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
@@ -287,33 +290,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 重新添加用户角色
         userRoleMapper.insertUserRole(user.getId(), user.getRoleIdList());
         // 删除Redis缓存中的角色
-        redisUtil.remove(RedisConstants.USER + user.getId().toString());
+        //redisUtil.remove(RedisConstants.USER + user.getId().toString());
         redisUtil.remove(RedisConstants.USER_INFO + user.getId().toString());
     }
 
     @Override
     public void kickOutUser(String token) {
         StpUtil.logoutByTokenValue(token);
+        redisUtil.remove(RedisConstants.USER_TOKEN + token);
     }
 
     @Override
     public PageResult<OnlineUserResp> listOnlineUser(OnlineUserQuery onlineUserQuery) {
-        // 查询所有会话token
-        List<String> tokenList = StpUtil.searchTokenSessionId("", 0, -1, false);
-        List<OnlineUserResp> onlineUserRespList = tokenList.stream()
-                .map(token -> {
-                    // 获取tokenSession
-                    SaSession sessionBySessionId = StpUtil.getSessionBySessionId(token);
-                    return (OnlineUserResp) sessionBySessionId.get(CommonConstant.ONLINE_USER);
+        // 查询所有token及对应的userId
+        Map<Object, Object> allTokenMap = redisUtil.getHashAll(RedisConstants.USER_TOKEN.getKey());
+        Set<Object> userIdSet = allTokenMap.keySet();
+
+        List<OnlineUserResp> onlineUserRespList = userIdSet.stream()
+                .map(userId -> {
+                    return redisUtil.get(RedisConstants.USER_INFO.getKey() + userId.toString(), OnlineUserResp.class);
                 })
-                .filter(onlineUserResp -> StringUtils.isEmpty(onlineUserQuery.getKeyword()) || onlineUserResp.getNickname().contains(onlineUserQuery.getKeyword()))
+                .filter(Objects::nonNull)
+                .filter(onlineUserResp -> StringUtils.isEmpty(onlineUserQuery.getKeyword())
+                        || onlineUserResp.getNickname().contains(onlineUserQuery.getKeyword()))
                 .sorted(Comparator.comparing(OnlineUserResp::getLoginTime).reversed())
                 .toList();
-        // 执行分页
         int fromIndex = onlineUserQuery.getCurrent();
         int size = onlineUserQuery.getSize();
         int toIndex = onlineUserRespList.size() - fromIndex > size ? fromIndex + size : onlineUserRespList.size();
-        List<OnlineUserResp> userOnlineList = onlineUserRespList.subList(fromIndex, toIndex);
+        List<OnlineUserResp> userOnlineList = fromIndex >= onlineUserRespList.size() ?
+                Collections.emptyList() : onlineUserRespList.subList(fromIndex, toIndex);
         return new PageResult<>(userOnlineList, (long) onlineUserRespList.size());
     }
 
