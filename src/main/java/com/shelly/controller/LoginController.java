@@ -52,7 +52,7 @@ public class LoginController {
      *
      * @return {@link Result<>}
      */
-    @AccessLimit(seconds = 60, maxCount = 1)
+    //@AccessLimit(seconds = 60, maxCount = 1)
     @GetMapping("/code")
     @Operation(summary = "发送邮箱验证码")
     public Result<?> sendCode(String username) {

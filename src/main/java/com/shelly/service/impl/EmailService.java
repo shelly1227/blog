@@ -1,26 +1,30 @@
 package com.shelly.service.impl;
 
 import com.shelly.entity.dto.MailDTO;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class EmailService {
-    @Value("${mail.username}")
+    @Value("${spring.mail.username}")
     private String email;
-    private final JavaMailSender javaMailSender;
-    private final org.thymeleaf.TemplateEngine templateEngine;
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Autowired
+    private org.thymeleaf.TemplateEngine templateEngine;
+    @Async
     public void sendSimpleMail(MailDTO mailDTO) {
         SimpleMailMessage simpleMail = new SimpleMailMessage();
         simpleMail.setFrom(email);
@@ -30,7 +34,7 @@ public class EmailService {
         javaMailSender.send(simpleMail);
     }
 
-
+    @Async
     public void sendHtmlMail(MailDTO mailDTO) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -47,5 +51,9 @@ public class EmailService {
             log.error("sendHtmlMail fail, {}", e.getMessage());
         }
     }
+    @PostConstruct
+    public void debugMailConfig() {
+        System.out.println(javaMailSender);
     }
+}
 
