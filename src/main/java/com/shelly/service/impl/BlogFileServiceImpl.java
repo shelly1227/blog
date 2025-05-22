@@ -122,6 +122,7 @@ public class BlogFileServiceImpl extends ServiceImpl<BlogFileMapper, BlogFile>
 
     @Override
     public PageResult<FileResp> listFile(FileQuery fileQuery) {
+        log.info("查询文件列表");
         Page<BlogFile> page = new Page<>(fileQuery.getOrigPage(), fileQuery.getSize());
         LambdaQueryWrapper<BlogFile> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(fileQuery.getFilePath())) {
@@ -139,6 +140,7 @@ public class BlogFileServiceImpl extends ServiceImpl<BlogFileMapper, BlogFile>
                     return dto;
                 })
                 .toList();
+        log.info("查询文件列表成功");
         // 返回分页结果
         return new PageResult<>(friendBackDTOList, blogFileIPage.getTotal());
     }

@@ -11,11 +11,6 @@ import java.util.Map;
 
 import static com.shelly.enums.UploadModeEnum.getStrategy;
 
-/**
- * 上传策略上下文
- *
- * @author ican
- */
 @Service
 public class UploadStrategyContext {
     /**

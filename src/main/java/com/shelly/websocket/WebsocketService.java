@@ -10,11 +10,11 @@ import com.shelly.enums.ChatTypeEnum;
 import com.shelly.mapper.ChatRecordMapper;
 import com.shelly.utils.HTMLUtils;
 import com.shelly.utils.IpUtils;
+import com.shelly.utils.SpringContextUtil;
 import jakarta.websocket.*;
 import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpoint;
 import jakarta.websocket.server.ServerEndpointConfig;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +27,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 @ServerEndpoint(value = "/websocket", configurator = WebsocketService.ChatConfigurator.class)
 public class WebsocketService {
-    private  final ChatRecordMapper chatRecordMapper;
+    private ChatRecordMapper chatRecordMapper;
+    public WebsocketService() {
+        // 通过SpringContextUtil获取Spring管理的Bean
+        this.chatRecordMapper = SpringContextUtil.getBean(ChatRecordMapper.class);
+    }
     /**
      * 在线人数
      */
@@ -69,6 +72,7 @@ public class WebsocketService {
     public void onOpen(Session session, EndpointConfig endpointConfig) throws IOException {
         // 当前session加入连接
         String ipAddress = endpointConfig.getUserProperties().get(ChatConfigurator.IP).toString();
+        log.info(ipAddress);
         WS_CONNECTIONS.put(ipAddress, session);
         // 更新在线人数
         ONLINE_NUM.incrementAndGet();

@@ -1,6 +1,7 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.shelly.annotation.OptLogger;
 import com.shelly.common.Result;
 import com.shelly.entity.vo.res.FileResp;

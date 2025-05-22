@@ -1,9 +1,15 @@
 package com.shelly.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shelly.entity.dto.BiliIpInfoDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,21 +23,35 @@ public class IpUtils {
      * @return 地理位置
      */
     public static String getIpSource(String ip) {
+        log.info("IP: {}", ip);
         try {
-            Map<String, String> paraMap = new HashMap<>(1);
-            paraMap.put("ip", ip);
-            String uri = "https://api.live.bilibili.com/client/v1/Ip/getInfoNew?ip={ip}";
-            RestTemplate restTemplate = new RestTemplate();
-            BiliIpInfoDTO ipInfoDTO = restTemplate.getForObject(uri, BiliIpInfoDTO.class, paraMap);
-            if (ipInfoDTO != null && ipInfoDTO.getCode() == 0) {
-                BiliIpInfoDTO.IpInfoData ipInfoData = ipInfoDTO.getData();
-                if (ipInfoData != null) {
-                    return ipInfoData.getCountry() + "|" + ipInfoData.getProvince() + "|" + ipInfoData.getCity() + "|" + ipInfoData.getIsp();
-                }
+            String uri = "https://api.live.bilibili.com/client/v1/Ip/getInfoNew?ip=" + ip;
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(uri))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            log.info("IP接口返回内容: {}", body);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(body);
+
+            int code = root.path("code").asInt(-1);
+            if (code == 0) {
+                JsonNode data = root.path("data");
+                String country = data.path("country").asText("");
+                String province = data.path("province").asText("");
+                String city = data.path("city").asText("");
+                String isp = data.path("isp").asText("");
+                return String.join("|", country, province, city, isp);
+            } else {
+                log.warn("IP解析失败，code={}", code);
             }
         } catch (Exception e) {
-            log.info("getIpSource fail, e", e);
-            return null;
+            log.error("getIpSource error: ", e);
         }
         return null;
     }
