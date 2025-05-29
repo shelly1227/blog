@@ -19,6 +19,7 @@ import com.shelly.mapper.ArticleMapper;
 import com.shelly.service.CategoryService;
 import com.shelly.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 * @createDate 2024-07-22 20:24:46
 */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     implements CategoryService{
@@ -131,13 +133,15 @@ wrapper.like(StringUtils.hasText(categoryQuery.getKeyword()),Category::getCatego
 
     @Override
     public ArticleConditionList listCategoryByArticle(ArticleConditionQuery articleQuery) {
+        log.info(articleQuery.toString());
+        List<ArticleConditionResp> articleConditionList = articleMapper.selectArticleListByCondition(articleQuery);
+        log.info("articleConditionList:" + articleConditionList.toString());
         String name = categoryMapper.selectOne(new LambdaQueryWrapper<Category>()
                         .select(Category::getCategoryName)
                         .eq(Category::getId, articleQuery.getCategoryId()))
                 .getCategoryName();
-        List<ArticleConditionResp> articleConditionVOList = articleMapper.selectArticleConditionList(articleQuery);
         return ArticleConditionList.builder()
-                .articleConditionVOList(articleConditionVOList)
+                .articleConditionVOList(articleConditionList)
                 .name(name)
                 .build();
     }

@@ -26,6 +26,7 @@ public class BlogInfoController {
     @Operation(summary = "上传访客信息")
     @PostMapping("/report")
     public Result<?> report() {
+        System.out.println("上传访客信息");
         blogInfoService.report();
         return Result.success();
     }

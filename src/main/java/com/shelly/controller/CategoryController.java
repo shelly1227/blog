@@ -75,7 +75,7 @@ public class CategoryController {
     @GetMapping("/category/article")
     @VisitLogger(value = "分类文章")
     @Operation(summary = "根据分类id获取文章列表")
-    public Result<ArticleConditionList> listCategoryByArticle(@Validated ArticleConditionQuery articleQuery) {
+    public Result<ArticleConditionList> listCategoryByArticle(ArticleConditionQuery articleQuery) {
         return Result.success(categoryService.listCategoryByArticle(articleQuery));
     }
     @GetMapping("/category/list")
