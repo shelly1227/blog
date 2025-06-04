@@ -97,7 +97,7 @@ spring:
             enable: true
 
 blog:
-  url: http:localhost:1314/
+  url: https://shelly.org.cn
 # 线程池配置
 thread:
   pool:
@@ -110,7 +110,7 @@ search:
   mode: mysql
 # 文件上传策略 local、oss、cos
 upload:
-  strategy: minio
+  strategy: oss
   local:
     url: https://static.example.com/
     path: /usr/local/upload/

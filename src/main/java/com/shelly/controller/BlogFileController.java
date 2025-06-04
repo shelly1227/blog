@@ -29,7 +29,6 @@ import static com.shelly.constants.OptTypeConstant.*;
 @RestController
 @Tag(name = "文件模块")
 @RequiredArgsConstructor
-//TODO
 public class BlogFileController {
     private final BlogFileService blogFileService;
     @PostMapping("/admin/file/createFolder")

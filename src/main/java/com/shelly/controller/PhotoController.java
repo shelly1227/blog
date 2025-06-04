@@ -1,6 +1,7 @@
 package com.shelly.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.shelly.annotation.OptLogger;
 import com.shelly.annotation.VisitLogger;
 import com.shelly.common.Result;
@@ -75,9 +76,10 @@ public class PhotoController {
         return Result.success();
     }
     @PostMapping("/admin/photo/upload")
-    @OptLogger(value = UPLOAD)
+    //@OptLogger(value = UPLOAD)
     @Operation(summary = "上传图片")
-    @SaCheckPermission("web:photo:upload")
+    //@SaCheckPermission("web:photo:upload")
+    @SaIgnore
     @ApiImplicitParam(name = "file", value = "照片", required = true, dataType = "MultipartFile")
     public Result<String> uploadPhoto(@RequestParam("file") MultipartFile file) {
         return Result.success(photoService.uploadPhoto(file));
