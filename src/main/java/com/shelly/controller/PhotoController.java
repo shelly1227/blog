@@ -76,9 +76,9 @@ public class PhotoController {
         return Result.success();
     }
     @PostMapping("/admin/photo/upload")
-    //@OptLogger(value = UPLOAD)
+    @OptLogger(value = UPLOAD)
     @Operation(summary = "上传图片")
-    //@SaCheckPermission("web:photo:upload")
+    @SaCheckPermission("web:photo:upload")
     @SaIgnore
     @ApiImplicitParam(name = "file", value = "照片", required = true, dataType = "MultipartFile")
     public Result<String> uploadPhoto(@RequestParam("file") MultipartFile file) {

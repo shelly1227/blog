@@ -22,11 +22,11 @@ public interface CommentMapper extends BaseMapper<Comment> {
     Long countComment(@Param("param") CommentQuery commentQuery);
 
     List<CommentBackResp> selectBackCommentList(@Param("param")CommentQuery commentQuery);
-
+    //check
     List<CommentResp> selectParentComment(@Param("param")CommentQuery commentQuery);
-
+    //check
     List<ReplyResp> selectReplyByParentIdList(@Param("parentCommentIdList")List<Integer> parentCommentIdList);
-
+    //check
     List<ReplyCountResp> selectReplyCountByParentId(@Param("parentCommentIdList") List<Integer> parentCommentIdList);
 
     List<RecentCommentResp> selectRecentComment();

@@ -27,6 +27,7 @@ import com.shelly.utils.HTMLUtils;
 import com.shelly.utils.PageUtils;
 import com.shelly.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     implements CommentService{
     private final CommentMapper commentMapper;
@@ -90,27 +92,53 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         if (CollectionUtils.isEmpty(commentRespList)) {
             return new PageResult<>();
         }
-        // 评论点赞
+        // 评论点赞数量（key: 评论id字符串, value: 点赞数）
         Map<String, Integer> likeCountMap = redisService.getHashAll(RedisConstants.COMMENT_LIKE_COUNT.getKey());
-        // 父评论id集合
-        List<Integer> parentCommentIdList = commentRespList.stream().map(CommentResp::getId).toList();
-        // 分组查询每组父评论下的子评论前三条，注意，这里是先全部混装在一起，再根据parentId分组
+
+// 获取父评论ID列表
+        List<Integer> parentCommentIdList = commentRespList.stream()
+                .map(CommentResp::getId)
+                .toList();
+
+// 查询所有子评论
         List<ReplyResp> replyRespList = commentMapper.selectReplyByParentIdList(parentCommentIdList);
-        // 封装子评论点赞量
-        replyRespList.forEach(item -> item.setLikeCount(Optional.ofNullable(likeCountMap.get(item.getId().toString())).orElse(0)));
-        // 根据父评论id生成对应子评论的Map，key为父评论id，value为子评论，但是缺少父评论回复数量
-        Map<Integer, List<ReplyResp>> replyMap = replyRespList.stream().collect(Collectors.groupingBy(ReplyResp::getParentId));
-        // 父评论的回复数量，一个简单查询，将父评论id作为id，变相实现了内连，依然是混装
+
+// 封装子评论点赞数
+        replyRespList.forEach(item ->
+                item.setLikeCount(Optional.ofNullable(likeCountMap.get(item.getId().toString())).orElse(0))
+        );
+
+// 将子评论按 parentId 分组
+        Map<Integer, List<ReplyResp>> replyMap = replyRespList.stream()
+                .collect(Collectors.groupingBy(ReplyResp::getParentId));
+
+// 获取每个父评论下的前三条子评论（按时间升序）
+        Map<Integer, List<ReplyResp>> top3ReplyMap = new HashMap<>();
+        replyMap.forEach((parentId, replies) -> {
+            List<ReplyResp> top3 = replies.stream()
+                    .sorted(Comparator.comparing(ReplyResp::getCreateTime))
+                    .limit(3)
+                    .toList();
+            top3ReplyMap.put(parentId, top3);
+        });
+
+// 查询每个父评论的回复数量
         List<ReplyCountResp> replyCountList = commentMapper.selectReplyCountByParentId(parentCommentIdList);
-        // 转换Map，key为父评论id，value为回复数量
-        Map<Integer, Integer> replyCountMap = replyCountList.stream().collect(Collectors.toMap(ReplyCountResp::getCommentId, ReplyCountResp::getReplyCount));
-        // 封装评论数据
+
+// 转换为 Map，key: 父评论ID，value: 回复数量
+        Map<Integer, Integer> replyCountMap = replyCountList.stream()
+                .collect(Collectors.toMap(ReplyCountResp::getCommentId, ReplyCountResp::getReplyCount));
+
+// 封装最终评论数据
         commentRespList.forEach(item -> {
             item.setLikeCount(Optional.ofNullable(likeCountMap.get(item.getId().toString())).orElse(0));
-            item.setReplyVOList(replyMap.get(item.getId()));
-            item.setReplyCount(Optional.ofNullable(replyCountMap.get(item.getId())).orElse(0));// 回复数量
+            item.setReplyVOList(top3ReplyMap.getOrDefault(item.getId(), Collections.emptyList()));
+            item.setReplyCount(Optional.ofNullable(replyCountMap.get(item.getId())).orElse(0));
         });
+
+// 返回分页结果
         return new PageResult<>(commentRespList, count);
+
     }
 
     @Override
@@ -143,6 +171,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         Integer commentCheck = siteConfig.getCommentCheck();
         // 过滤标签
         comment.setCommentContent(HTMLUtils.filter(comment.getCommentContent()));
+        log.info("评论内容step2：{}", comment.getCommentContent());
         Comment newComment = Comment.builder()
                 .fromUid(StpUtil.getLoginIdAsInt())
                 .toUid(comment.getToUid())

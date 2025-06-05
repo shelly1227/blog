@@ -19,6 +19,7 @@ import com.shelly.strategy.context.LikeStrategyContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ import static com.shelly.constants.OptTypeConstant.UPDATE;
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "评论模块")
+@Slf4j
 public class CommentController {
 
     private final CommentService commentService;
@@ -50,6 +52,7 @@ public class CommentController {
     @Operation(summary = "添加评论")
     @PostMapping("/comment/add")
     public Result<?> addComment(@Validated @RequestBody CommentReq comment) {
+        log.info("添加评论step1: {}", comment);
         commentService.addComment(comment);
         return Result.success();
     }
